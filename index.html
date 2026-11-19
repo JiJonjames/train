@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>폭주 열차 107</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* Series design system (shared with 애시콤 홀 사건): black base, red primary, orange accent.
+   Motion language: ease-out entrances, staggered lists, glitch for the hacker's voice, lower thirds for objectives,
+   kinetic typography for title/ending, count-up numbers on the result screen. */
+:root{
+  --bg:#08080a;--panel:#121013;--panel-2:#1b1719;--line:#2e2628;
+  --red:#d3262c;--red-deep:#6e0f14;--orange:#ff7a1a;--text:#f3ece6;--muted:#a39893;--ok:#5fbf7a;--cyan:#56d6ff;
+  --font-display:"Nanum Myeongjo",Georgia,serif;
+  --font-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --font-type:"Courier Prime","Courier New",monospace;
+  --ease-out:cubic-bezier(.16,1,.3,1);--r:6px;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.42}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
+.mono{font-family:var(--font-type);font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:var(--r);padding:9px 14px;font-weight:700;font-size:14px;transition:background .15s,border-color .15s,transform .1s;white-space:nowrap}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn-cta{background:var(--red);color:#fff}.btn-cta:hover:not(:disabled){background:#e83a40}
+.btn-ghost{background:rgba(18,16,19,.78);border-color:var(--line);backdrop-filter:blur(6px)}.btn-ghost:hover:not(:disabled){border-color:var(--orange)}
+.btn-orange{background:var(--orange);color:#1a0c02}
+.kbd{font-family:var(--font-type);font-size:11px;border:1px solid var(--line);border-radius:3px;padding:0 5px;color:var(--muted);line-height:1.5}
+
+/* ---------- start ---------- */
+#start{position:fixed;inset:0;overflow:auto;z-index:40;background:radial-gradient(1000px 520px at 90% 0%,rgba(211,38,44,.25),transparent 60%),radial-gradient(800px 500px at 0% 100%,rgba(255,122,26,.12),transparent 60%),var(--bg)}
+.start-wrap{max-width:1120px;margin:0 auto;padding:46px 20px 60px;display:grid;gap:34px}
+.hero{display:grid;gap:14px;max-width:780px}
+.series{font-family:var(--font-type);font-size:12px;letter-spacing:.16em;color:var(--muted)}
+.badge{justify-self:start;font-family:var(--font-type);font-size:12px;letter-spacing:.14em;color:var(--orange);border:1px solid rgba(255,122,26,.4);padding:3px 10px;border-radius:999px}
+.hero h1{font-family:var(--font-body);font-weight:900;font-size:clamp(46px,8vw,92px);letter-spacing:-.04em;line-height:.95}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero p{margin:0;color:var(--muted);max-width:62ch;font-size:17px}
+.sect{font-family:var(--font-type);font-size:12px;letter-spacing:.16em;color:var(--muted);margin:0 0 12px}
+.ranks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.rank{position:relative;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:8px;transition:border-color .15s,background .15s,transform .25s var(--ease-out)}
+.rank:hover{transform:translateY(-2px);border-color:#5a4447}
+.rank[aria-checked="true"]{border-color:var(--red);background:linear-gradient(180deg,rgba(211,38,44,.13),transparent 70%),var(--panel)}
+.rank .lv{font-family:var(--font-type);font-size:11px;letter-spacing:.14em;color:var(--muted)}
+.rank h3{font-size:22px;font-weight:900}
+.rank[aria-checked="true"] h3{color:#ff5a5f}
+.rank ul{margin:0;padding-left:18px;color:#d6ccc6;font-size:14px;line-height:1.55}
+.rank .check{position:absolute;top:14px;right:14px;width:18px;height:18px;border-radius:50%;border:2px solid var(--line)}
+.rank[aria-checked="true"] .check{border-color:var(--red);background:radial-gradient(circle,var(--red) 45%,transparent 50%)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.seg button{background:none;border:0;padding:8px 14px;font-size:14px;color:var(--muted)}
+.seg button[aria-checked="true"]{background:var(--panel-2);color:var(--text);box-shadow:inset 0 -2px 0 var(--orange)}
+.start-foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;align-items:start}
+.controls{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;color:#d6ccc6;margin:0}
+.controls dt{text-align:right}.controls dd{margin:0}
+.note-s{font-size:13px;color:var(--muted);margin:0}
+.cta-row .btn{padding:13px 22px;font-size:16px}
+
+/* ---------- loading ---------- */
+#loading{position:fixed;inset:0;z-index:45;background:var(--bg);display:grid;place-items:center;padding:20px}
+.load-card{width:min(420px,100%);display:grid;gap:14px}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--red);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bar{height:4px;background:var(--panel-2);border-radius:2px;overflow:hidden}.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--orange));transition:width .25s var(--ease-out)}
+.skel{height:12px;border-radius:3px;background:linear-gradient(90deg,var(--panel) 0%,var(--panel-2) 50%,var(--panel) 100%);background-size:200% 100%;animation:sk 1.2s linear infinite}@keyframes sk{to{background-position:-200% 0}}
+
+/* ---------- stage & HUD ---------- */
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#vignette{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.6) 100%)}
+#danger{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0;box-shadow:inset 0 0 160px 30px rgba(211,38,44,.55)}
+#danger.on{animation:pulse 1s ease-in-out infinite}@keyframes pulse{50%{opacity:1}}
+#flash{position:fixed;inset:0;pointer-events:none;z-index:30;background:#fff;opacity:0;transition:opacity .2s}
+.hud{position:fixed;z-index:5}
+#hudTop{top:0;left:0;right:0;display:flex;gap:12px 16px;align-items:flex-start;padding:12px 14px;padding-top:max(12px,env(safe-area-inset-top));pointer-events:none;flex-wrap:wrap;background:linear-gradient(180deg,rgba(8,8,10,.85),transparent)}
+#hudTop>*{pointer-events:auto}
+.timer{display:grid;gap:0;background:rgba(18,16,19,.82);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:170px;backdrop-filter:blur(6px)}
+.timer .lbl{font-family:var(--font-type);font-size:10.5px;letter-spacing:.16em;color:var(--muted)}
+.timer .big{font-family:var(--font-type);font-weight:700;font-size:34px;line-height:1.05;color:var(--text);font-variant-numeric:tabular-nums}
+.timer.low{border-color:var(--red)}.timer.low .big{color:#ff4a50}
+.gauges{display:flex;gap:14px;font-family:var(--font-type);font-size:12.5px;color:var(--muted);margin-top:2px}
+.gauges b{color:var(--text);font-size:14px}
+#trainStrip{flex:1;min-width:280px;max-width:640px;display:grid;gap:4px}
+#strip{width:100%;height:46px;display:block;border-radius:6px;background:rgba(18,16,19,.82);border:1px solid var(--line);cursor:pointer}
+.where{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+.where b{color:var(--text)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#lower{left:14px;bottom:22px;display:flex;align-items:stretch;gap:0;max-width:min(560px,calc(100% - 28px));animation:lt .6s var(--ease-out)}
+@keyframes lt{from{transform:translateX(-30px);opacity:0}}
+#lower .bar-l{width:5px;background:var(--red);border-radius:3px 0 0 3px}
+#lower .txt{background:rgba(8,8,10,.86);padding:8px 14px;border:1px solid var(--line);border-left:0;border-radius:0 6px 6px 0}
+#lower .k{font-family:var(--font-type);font-size:11px;letter-spacing:.16em;color:var(--orange)}
+#lower .v{font-weight:700;font-size:15px}
+#crosshair{left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:rgba(243,236,230,.75);box-shadow:0 0 0 2px rgba(0,0,0,.45);transition:transform .12s,background .12s}
+#crosshair.on{background:var(--orange);transform:scale(1.9)}
+#prompt{left:50%;bottom:96px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:rgba(8,8,10,.88);border:1px solid var(--orange);border-radius:999px;padding:7px 16px 7px 7px;font-size:15px;white-space:nowrap;max-width:calc(100% - 24px)}
+#prompt .key{background:var(--orange);color:#1a0c02;font-family:var(--font-type);font-weight:700;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;flex:none}
+#prompt small{color:var(--muted);font-size:12.5px}
+#prompt .tagx{font-size:11.5px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+#prompt .tagx.sus{color:#1a0c02;background:var(--orange);border-color:var(--orange)}
+#lookHint{left:50%;bottom:52px;transform:translateX(-50%);font-size:13px;color:var(--muted);background:rgba(8,8,10,.72);padding:6px 12px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+#perf{left:14px;bottom:86px;font-family:var(--font-type);font-size:11.5px;color:var(--muted);background:rgba(8,8,10,.72);padding:6px 9px;border-radius:4px;line-height:1.5}
+#toasts{right:14px;bottom:20px;display:grid;gap:8px;max-width:min(380px,calc(100% - 28px));z-index:30;justify-items:end}
+.toast{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:var(--r);padding:9px 12px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:tin .35s var(--ease-out)}
+.toast.acc{border-left-color:var(--orange)}.toast.ok{border-left-color:var(--ok)}
+@keyframes tin{from{opacity:0;transform:translateY(10px) scale(.98)}}
+.notif{display:grid;gap:2px;cursor:pointer}
+.notif .h{font-family:var(--font-type);font-size:11px;letter-spacing:.1em;color:var(--orange)}
+
+/* glitch text for the hacker */
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0;overflow:hidden}
+.glitch::before{color:var(--cyan);transform:translate(-2px,0);clip-path:inset(0 0 55% 0);animation:g1 2.4s steps(2) infinite;opacity:.8}
+.glitch::after{color:var(--red);transform:translate(2px,0);clip-path:inset(55% 0 0 0);animation:g2 2.1s steps(2) infinite;opacity:.8}
+@keyframes g1{0%,88%{transform:translate(0)}90%{transform:translate(-3px,-1px)}94%{transform:translate(2px,1px)}}
+@keyframes g2{0%,85%{transform:translate(0)}88%{transform:translate(3px,1px)}93%{transform:translate(-2px,0)}}
+
+/* ---------- side panel (passenger / device) ---------- */
+#panel{top:0;right:0;bottom:0;width:min(420px,100%);z-index:20;background:rgba(12,10,12,.96);border-left:1px solid var(--line);display:grid;grid-template-rows:auto 1fr;backdrop-filter:blur(8px);animation:pin .3s var(--ease-out);padding-top:env(safe-area-inset-top)}
+@keyframes pin{from{transform:translateX(28px);opacity:0}}
+.ph{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.crumb{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--muted)}.crumb b{color:var(--text)}
+.xbtn{margin-left:auto;background:none;border:1px solid var(--line);border-radius:var(--r);width:34px;height:34px;flex:none;display:grid;place-items:center;font-size:18px;color:var(--muted)}
+.xbtn:hover{color:var(--text);border-color:var(--orange)}
+.pb{overflow:auto;padding:16px;display:grid;align-content:start;gap:14px}
+.pb h2{font-size:24px;font-weight:900}
+.desc{color:var(--muted);font-size:14.5px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--panel)}
+.chip.hid{border-style:dashed;color:var(--muted)}
+.chip.match{border-color:var(--orange);color:var(--orange)}
+.report{background:#efe7dc;color:#1b1415;border-radius:var(--r);padding:12px 14px;border-left:4px solid var(--red);font-size:15px;line-height:1.6;animation:tin .3s var(--ease-out)}
+.report .rh{font-family:var(--font-type);font-size:11.5px;color:#6d5f5a;margin-bottom:3px}
+.acts{display:grid;gap:8px}
+.act{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;font-size:15px;transition:border-color .15s,background .15s}
+.act:hover:not(:disabled){border-color:var(--orange);background:var(--panel-2)}
+.act .t{font-family:var(--font-type);font-size:12px;color:var(--muted);white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.act.done{opacity:.6}.act.done .t::before{content:"✓ ";color:var(--ok)}
+.act.danger{border-color:var(--red-deep)}.act.danger:hover:not(:disabled){border-color:var(--red);background:rgba(211,38,44,.12)}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.confirm{border:1px solid var(--red);border-radius:8px;padding:12px;display:grid;gap:10px;background:rgba(211,38,44,.08)}
+
+/* ---------- phone ---------- */
+#phone{right:18px;top:50%;transform:translateY(-50%);width:min(380px,calc(100% - 24px));height:min(720px,calc(100% - 120px));z-index:22;background:#050506;border:2px solid #2a2326;border-radius:30px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.7);display:grid;grid-template-rows:auto auto 1fr;animation:phin .38s var(--ease-out)}
+@keyframes phin{from{transform:translateY(-44%);opacity:0}}
+.notch{width:90px;height:6px;border-radius:3px;background:#1d1719;margin:2px auto 10px}
+.phone-h{display:flex;align-items:center;gap:8px;padding:0 6px 8px}
+.phone-h .app{font-weight:900;font-size:17px}
+.ptabs{display:flex;gap:4px;padding:0 4px 8px;border-bottom:1px solid var(--line);overflow-x:auto}
+.ptabs button{background:none;border:0;padding:7px 10px;border-radius:999px;font-size:13px;color:var(--muted);white-space:nowrap}
+.ptabs button[aria-selected="true"]{background:var(--panel-2);color:var(--text);font-weight:700}
+.ptabs .n{font-family:var(--font-type);font-size:10.5px;color:var(--orange);margin-left:3px}
+.pscroll{overflow:auto;padding:10px 4px 6px;display:grid;align-content:start;gap:10px}
+.post{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;animation:tin .4s var(--ease-out) both}
+.post .who{display:flex;align-items:center;gap:8px;font-size:13px}
+.post .av{width:26px;height:26px;border-radius:50%;background:#000;border:1px solid var(--red);display:grid;place-items:center;font-family:var(--font-type);font-size:11px;color:var(--red)}
+.post .nm{font-weight:700}.post .ts{margin-left:auto;font-family:var(--font-type);font-size:11px;color:var(--muted)}
+.post .body{margin-top:6px;font-size:14.5px;line-height:1.55}
+.post .cm{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px;font-size:12.5px;color:var(--muted);display:grid;gap:3px}
+.post.fake .av{border-color:#666;color:#999}
+.post.new{border-color:var(--orange)}
+.wifi-car{display:grid;gap:4px}
+.wifi-car h4{margin:0;font-size:13px;color:var(--orange);font-family:var(--font-type);letter-spacing:.08em}
+.wifi-car ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:5px}
+.wifi-car li{font-family:var(--font-type);font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:16px;color:var(--muted);font-size:14px;text-align:center}
+.clue-row{display:flex;gap:8px;align-items:flex-start;font-size:14px;padding:6px 0;border-bottom:1px solid var(--line)}
+.clue-row .ic{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:var(--panel-2);border:1px solid var(--line)}
+.clue-row.vis .ic{border-color:var(--orange);color:var(--orange)}
+
+/* ---------- modal ---------- */
+#modal{position:fixed;inset:0;z-index:35;background:rgba(4,4,5,.8);display:grid;place-items:center;padding:16px;backdrop-filter:blur(3px)}
+.sheet{width:min(900px,100%);max-height:calc(100% - 8px);background:var(--panel);border:1px solid var(--line);border-radius:12px;display:grid;grid-template-rows:auto 1fr;overflow:hidden;animation:min .35s var(--ease-out)}
+@keyframes min{from{transform:translateY(14px) scale(.98);opacity:0}}
+.sheet-h{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.sheet-h h2{font-size:22px;font-weight:900}
+.sheet-b{overflow:auto;padding:16px 18px 20px;display:grid;gap:12px;align-content:start}
+#mapCanvas{width:100%;height:auto;display:block;border-radius:8px;background:#060607;border:1px solid var(--line);cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.score{font-family:var(--font-type);font-size:58px;font-weight:700;color:var(--red);line-height:1}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.stat .k{font-size:12px;color:var(--muted)}.stat .v{font-family:var(--font-type);font-size:24px;font-weight:700}
+.prose p{margin:0 0 10px;max-width:68ch}
+
+/* ---------- cinematic ---------- */
+#cine{position:fixed;inset:0;z-index:25;pointer-events:none}
+#cine .lb{position:absolute;left:0;right:0;height:11vh;background:#000;transition:transform .8s var(--ease-out)}
+#cine .lb.t{top:0}#cine .lb.b{bottom:0}
+#cine.off .lb.t{transform:translateY(-100%)}#cine.off .lb.b{transform:translateY(100%)}
+#cineText{position:absolute;left:6vw;bottom:15vh;max-width:80vw}
+.kin{font-weight:900;font-size:clamp(44px,9vw,120px);letter-spacing:-.04em;line-height:.95;display:flex;flex-wrap:wrap}
+.kin span{display:inline-block;opacity:0;transform:translateY(40%);animation:kin .7s var(--ease-out) forwards}
+@keyframes kin{to{opacity:1;transform:none}}
+.cine-sub{font-family:var(--font-type);font-size:14px;letter-spacing:.18em;color:var(--orange);margin-bottom:8px;opacity:0;animation:fade .6s .2s forwards}
+@keyframes fade{to{opacity:1}}
+#skip{position:fixed;right:18px;bottom:calc(11vh + 14px);z-index:26;pointer-events:auto}
+
+/* ---------- mobile ---------- */
+#tabbar{left:0;right:0;bottom:0;display:none;background:rgba(8,8,10,.94);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+#tabbar button{flex:1;background:none;border:0;padding:9px 4px 8px;font-size:12px;color:var(--muted);display:grid;gap:2px;justify-items:center}
+#tabbar svg{width:20px;height:20px}
+#joy{left:22px;bottom:90px;width:120px;height:120px;border-radius:50%;border:2px solid rgba(243,236,230,.18);background:rgba(8,8,10,.3);display:none;pointer-events:none}
+#joy i{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;background:rgba(255,122,26,.55)}
+#useBtn{right:22px;bottom:100px;width:72px;height:72px;border-radius:50%;background:var(--orange);color:#1a0c02;font-weight:700;border:0;display:none}
+@media (pointer:coarse){
+  #tabbar{display:flex}#joy{display:block}.top-actions{display:none!important}#lookHint{display:none}
+  #prompt{bottom:200px}#lower{bottom:calc(70px + env(safe-area-inset-bottom))}#toasts{top:120px;bottom:auto}
+}
+@media (max-width:700px){
+  .timer{min-width:0;padding:6px 10px}.timer .big{font-size:26px}
+  #trainStrip{order:3;min-width:100%}
+  #panel{top:auto;height:72%;width:100%;border-left:0;border-top:2px solid var(--red);border-radius:14px 14px 0 0}
+  #phone{right:6px;left:6px;width:auto;height:calc(100% - 90px);top:auto;bottom:6px;transform:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.kin span{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="stage" aria-label="열차 3D 화면"></canvas>
+<div id="vignette"></div><div id="danger"></div><div id="flash"></div>
+
+<section id="start">
+ <div class="start-wrap">
+  <header class="hero">
+   <span class="series">CASE FILES · 사건 02</span>
+   <span class="badge">한빛 고속열차 107호 · 23:41 · 하행</span>
+   <h1>폭주 <em>열차</em></h1>
+   <p>누군가 열차 제어 시스템을 장악했다. 열차는 종착역 차막이 벽을 향해 가속 중이다. 범인 ‘레일고스트’는 이 열차 어딘가에 앉아, 인터넷 게시판에 자신을 찾을 실마리를 하나씩 흘린다. 승객 사이에 숨은 범인을 체포해 제어 단말기를 빼앗고, 기관실로 달려가 열차를 세워라.</p>
+  </header>
+  <div>
+   <p class="sect">01 · 계급</p>
+   <div class="ranks" role="radiogroup" aria-label="난이도">
+    <button class="rank" role="radio" aria-checked="false" data-diff="easy"><span class="check"></span><span class="lv">EASY</span><h3>견습</h3><ul><li>승객 72명 · 제한 15분</li><li>단서와 맞지 않는 승객은 자동으로 흐려짐</li><li>휴대폰을 보는 동안 시간 정지</li><li>오인 체포 −20초</li></ul></button>
+    <button class="rank" role="radio" aria-checked="true" data-diff="normal"><span class="check"></span><span class="lv">NORMAL</span><h3>형사</h3><ul><li>승객 120명 · 제한 11분</li><li>용의자 표시·제외는 직접</li><li>시간은 멈추지 않는다</li><li>오인 체포 −40초</li></ul></button>
+    <button class="rank" role="radio" aria-checked="false" data-diff="hard"><span class="check"></span><span class="lv">HARD</span><h3>특수수사대</h3><ul><li>승객 180명 · 제한 8분 30초</li><li>모방범의 가짜 단서가 섞인다</li><li>조사마다 더 긴 시간 소모</li><li>오인 체포 −60초</li></ul></button>
+   </div>
+  </div>
+  <div class="start-foot">
+   <div style="display:grid;gap:14px">
+    <p class="sect" style="margin:0">02 · 그래픽 품질</p>
+    <div class="seg" role="radiogroup" aria-label="그래픽 품질" id="qualSeg"><button role="radio" aria-checked="false" data-q="low">낮음</button><button role="radio" aria-checked="true" data-q="med">보통</button><button role="radio" aria-checked="false" data-q="high">높음</button></div>
+    <p class="note-s">승객 모델 정밀도, 좌석 디테일, 창밖 풍경 밀도가 바뀝니다. 프레임이 떨어지면 해상도를 자동으로 낮춥니다.</p>
+    <div class="row cta-row"><button class="btn btn-cta" id="startBtn">열차에 오른다</button><span class="note-s" id="best"></span></div>
+   </div>
+   <div>
+    <p class="sect">03 · 조작</p>
+    <dl class="controls">
+     <dt><span class="kbd">W A S D</span></dt><dd>이동 (<span class="kbd">Shift</span> 달리기)</dd>
+     <dt><span class="kbd">마우스</span></dt><dd>둘러보기 (화면 클릭 후, 또는 드래그)</dd>
+     <dt><span class="kbd">E</span></dt><dd>승객 관찰 · 비상 브레이크 · 기관실 제어반</dd>
+     <dt><span class="kbd">Q</span> / <span class="kbd">X</span></dt><dd>보고 있는 승객을 용의자로 표시 / 제외</dd>
+     <dt><span class="kbd">P</span></dt><dd>휴대폰 (게시판 · 열차 Wi-Fi · 단서 정리)</dd>
+     <dt><span class="kbd">M</span></dt><dd>열차 배치도 · 칸 이동</dd>
+     <dt><span class="kbd">Esc</span></dt><dd>창 닫기 · 일시정지 메뉴</dd>
+    </dl>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="loading" class="hidden" aria-live="polite"><div class="load-card"><div class="row"><div class="spinner" role="status" aria-label="불러오는 중"></div><h2 style="font-size:22px;font-weight:900">열차를 조립하는 중</h2></div><div class="bar"><i id="loadBar"></i></div><p class="note-s mono" id="loadStep">준비 중…</p><div class="skel" style="width:90%"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:80%"></div></div></section>
+
+<div id="cine" class="hidden"><div class="lb t"></div><div class="lb b"></div><div id="cineText"></div></div>
+<button id="skip" class="btn btn-ghost hidden">건너뛰기 <span class="kbd">Space</span></button>
+
+<div id="hud" class="hidden">
+ <div id="hudTop" class="hud">
+  <div class="timer" id="timer"><span class="lbl">충돌까지</span><span class="big" id="tLeft">11:00</span><div class="gauges"><span><b id="speed">0</b> km/h</span><span><b id="dist">0.0</b> km</span></div></div>
+  <div id="trainStrip"><canvas id="strip" width="1280" height="92" aria-label="열차 미니맵"></canvas><div class="where"><span>현재 <b id="carName">4호차</b></span><span id="paxInfo"></span></div></div>
+  <div class="top-actions"><button class="btn btn-ghost" id="phoneBtn">휴대폰 <span class="kbd">P</span></button><button class="btn btn-ghost" id="mapBtn">배치도 <span class="kbd">M</span></button><button class="btn btn-ghost" id="menuBtn">메뉴</button></div>
+ </div>
+ <div id="lower" class="hud"><span class="bar-l"></span><span class="txt"><span class="k" id="objK">OBJECTIVE</span><br><span class="v" id="objV">레일고스트를 찾아 체포하라</span></span></div>
+ <div id="crosshair" class="hud"></div>
+ <div id="prompt" class="hud hidden"><span class="key">E</span><span id="promptTxt"></span></div>
+ <div id="lookHint" class="hud">화면을 클릭하면 시점이 고정됩니다 · 드래그로도 둘러볼 수 있어요</div>
+ <div id="perf" class="hud hidden"></div>
+ <div id="joy" class="hud"><i id="joyKnob"></i></div>
+ <button id="useBtn" class="hud" aria-label="조사">조사</button>
+ <nav id="tabbar" class="hud" aria-label="하단 메뉴">
+  <button id="tbPhone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>휴대폰</button>
+  <button id="tbMap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="8" rx="2"/><path d="M7 8v8M12 8v8M17 8v8"/></svg>배치도</button>
+  <button id="tbSus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v5M12 16h.01"/></svg>표시</button>
+  <button id="tbMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>메뉴</button>
+ </nav>
+ <div id="toasts" class="hud" aria-live="polite"></div>
+</div>
+
+<aside id="panel" class="hud hidden" aria-label="조사 창"><div class="ph"><nav class="crumb" id="pCrumb"></nav><button class="xbtn" id="pClose" aria-label="닫기">×</button></div><div class="pb" id="pBody"></div></aside>
+<section id="phone" class="hud hidden" aria-label="휴대폰"><div class="notch"></div><div class="phone-h"><span class="app">휴대폰</span><span class="note-s mono" id="phClock"></span><button class="xbtn" id="phClose" aria-label="휴대폰 닫기" style="width:30px;height:30px">×</button></div><div style="display:grid;grid-template-rows:auto 1fr;min-height:0"><div class="ptabs" role="tablist" id="ptabs"></div><div class="pscroll" id="pscroll"></div></div></section>
+<div id="modal" class="hidden" role="dialog" aria-modal="true"><div class="sheet" id="sheet"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
+<script>
+
+"use strict";
+/* ====================================================================
+   CONFIG
+   ==================================================================== */
+const DIFFS={
+  easy:{name:"견습",pax:72,time:900,interval:38,penalty:20,brake:40,dim:true,decoys:0,travel:0,obs:0,ticket:2,phone:3,pauseUI:true,twins:1,match:true},
+  normal:{name:"형사",pax:120,time:660,interval:50,penalty:40,brake:25,dim:false,decoys:0,travel:5,obs:3,ticket:5,phone:8,pauseUI:false,twins:2,match:true},
+  hard:{name:"특수수사대",pax:180,time:510,interval:58,penalty:60,brake:18,dim:false,decoys:2,travel:10,obs:4,ticket:7,phone:10,pauseUI:false,twins:3,match:false}
+};
+const CAR_LEN=20;
+const CARS=[{t:"cab",n:"기관실",no:null},{t:"seat",n:"1호차",no:1},{t:"seat",n:"2호차",no:2},{t:"seat",n:"3호차",no:3},{t:"cafe",n:"카페칸",no:null},{t:"seat",n:"4호차",no:4},{t:"seat",n:"5호차",no:5},{t:"seat",n:"6호차",no:6}];
+const ROWS=16,COLS=[-1.08,-0.62,0.62,1.08],COLN=["A","B","C","D"];
+const rowZ=r=>2.6+r*.98;
+const V_MIN=160,V_MAX=330;
+const STATIONS=["서울","광명","천안아산","오송","대전"];
+
+const COATS=[["black","검은색",0x17151a,"내 외투는 터널 속처럼 검다."],["gray","회색",0x5c5b60,"내 옷은 비에 젖은 콘크리트 색이다."],["navy","남색",0x1d2744,"밤바다 색 외투를 입었다."],["red","빨간색",0xb01e24,"내 외투는 이 열차 비상 브레이크 손잡이와 같은 색이다."],["orange","주황색",0xd8641a,"내 옷은 꺼져 가는 노을 색이다."],["beige","베이지색",0xb59a74,"내 외투는 모래사장 색이다."],["khaki","카키색",0x4c5436,"군복 같은 카키색 옷을 입었다."]];
+const HATS=[["none","모자 없음","모자는 쓰지 않았다. 숨길 얼굴도 없거든."],["cap","야구모자","챙 달린 모자가 내 눈을 가린다."],["beanie","털모자","귀까지 덮는 털모자를 썼다."]];
+const HAIRS=[["black","검은 머리",0x141010,"내 머리는 까맣다. 이 밤처럼."],["brown","갈색 머리",0x4a2c18,"갈색 머리다."],["gray","희끗한 머리",0x8c8a88,"머리가 희끗희끗하다. 나이를 먹었지."],["blond","밝게 염색한 머리",0xc9a35a,"머리를 밝게 물들였다."]];
+const ITEMS=[["none","빈손","내 두 손은 비어 있다."],["phone","휴대폰","지금 휴대폰을 쥐고 있다. 당연하지, 이 글을 쓰고 있으니까."],["coffee","커피","카페칸에서 산 커피가 아직 따뜻하다."],["book","종이책","종이책을 펼쳐 놓고 있다."],["laptop","노트북","무릎 위에 노트북이 열려 있다."]];
+const BAGS=[["none","가방 없음","가방은 없다. 짐 없이 탔다."],["backpack","백팩","백팩을 발밑에 내려놓았다."],["briefcase","서류가방","서류가방이 다리 옆에 서 있다."]];
+const SUR="김이박최정강조윤장임한오서신권황안송류홍".split("");
+const GIV=["민준","서연","지훈","하은","도윤","수빈","현우","지민","예준","유진","승현","다은","준서","소윤","태윤","가은","시우","채원","건우","나연","은호","윤서","재원","수아","동현","혜진","성민","경수","영호","미정","상철","보람","정우","지아","한결","세영"];
+const DEVBASE=["의 iPhone","의 Galaxy","-phone","_mobile","의 갤럭시","폰"];
+const DEVPLAIN=["Galaxy S23","iPhone","Galaxy Z Flip","HOME-PC","iPad","Pixel","MacBook Air","Galaxy Tab","LG-Gram","Redmi Note"];
+
+let seed=Date.now()%2147483647;function rnd(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const wpick=(a,w)=>{let s=w.reduce((x,y)=>x+y,0),r=rnd()*s;for(let i=0;i<a.length;i++){r-=w[i];if(r<=0)return a[i]}return a[a.length-1]};
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtT=s=>{s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
+
+/* ====================================================================
+   STATE
+   ==================================================================== */
+const G={diff:"normal",D:null,T:0,T0:0,el:0,phase:"title",pax:[],seats:[],culprit:-1,clues:[],posts:[],shownPosts:0,wrong:0,brakes:new Set(),observed:new Set(),checked:{},arrested:false,code:"",unread:0,phoneTab:"board",speed:V_MIN,pausedMenu:false,endT:0,endD:0,tunnel:false,lastPostEl:0,alarmAcc:0};
+
+/* ====================================================================
+   PASSENGERS & CLUES
+   ==================================================================== */
+function seatList(){
+  const s=[];
+  CARS.forEach((c,k)=>{
+    if(c.t==="seat")for(let r=0;r<ROWS;r++)for(let ci=0;ci<4;ci++)s.push({car:k,x:COLS[ci],z:k*CAR_LEN+rowZ(r),yaw:r<8?Math.PI:0,label:`${c.no}호차 ${r+1}${COLN[ci]}`,side:(ci===0||ci===3)?"window":"aisle",facing:r<8?"fwd":"back"});
+    if(c.t==="cafe")[9.2,12.4,15.6].forEach((tz,ti)=>[-1,1].forEach(sx=>[-1,1].forEach(sz=>s.push({car:k,x:sx*1.02,z:k*CAR_LEN+tz+sz*.62,yaw:sz<0?0:Math.PI,label:`카페칸 ${ti+1}번 테이블`,side:"window",facing:sz<0?"back":"fwd",cafe:true}))));
+  });
+  return s;
+}
+function genPassengers(){
+  const D=G.D;G.seats=seatList();const order=shuffle(G.seats.map((_,i)=>i));
+  // keep cafe a bit busier
+  const n=D.pax,pax=[];const used=new Set();
+  for(const si of order){if(pax.length>=n)break;if(G.seats[si].cafe&&rnd()<.25)continue;used.add(si);
+    const age=19+Math.floor(rnd()*54);
+    const hair=age>58&&rnd()<.6?"gray":wpick(["black","brown","gray","blond"],[60,20,6,9]);
+    const p={i:pax.length,seat:si,car:G.seats[si].car,name:pick(SUR)+pick(GIV),age,
+      coat:wpick(COATS.map(c=>c[0]),[20,18,17,9,8,15,10]),hat:wpick(["none","cap","beanie"],[58,24,18]),glasses:rnd()<.32,hair,
+      item:wpick(["none","phone","coffee","book","laptop"],[22,38,14,12,14]),headphones:rnd()<.24,bag:wpick(["none","backpack","briefcase"],[48,32,20]),
+      hand:rnd()<.12?"left":"right",station:wpick(STATIONS,[40,18,16,12,14]),
+      skin:[0xe8c2a6,0xd9b08f,0xc69676,0xb98563][Math.floor(rnd()*4)],pants:[0x1a1a1e,0x2a2a33,0x3a3026,0x1d2333][Math.floor(rnd()*4)],
+      hatCol:[0x111111,0x2a2a2a,0x7a1116,0xd8641a,0x1d2744,0x8c8a88][Math.floor(rnd()*6)],hpCol:[0x111111,0xe9e3d8,0xd3262c][Math.floor(rnd()*3)],
+      excluded:false,suspect:false,autoDim:false,refuse:rnd()<.05};
+    p.device=rnd()<.9?(rnd()<.55?p.name.slice(1)+pick(DEVBASE):pick(DEVPLAIN)):null;
+    pax.push(p)}
+  G.pax=pax;
+  // culprit
+  const ci=Math.floor(rnd()*pax.length);G.culprit=ci;const c=pax[ci];
+  c.device=pick(["Galaxy-","iPhone-","RG","SM-A","PC-"]).replace("RG","Note-")+String(1000+Math.floor(rnd()*9000));c.refuse=true;
+  if(c.item==="none"&&rnd()<.5)c.item="phone";
+  // other 4-digit devices (wifi decoys)
+  shuffle(pax.filter(p=>p!==c)).slice(0,5).forEach(p=>p.device=pick(["Galaxy-","WIN-","iPad-","Tab-"])+String(1000+Math.floor(rnd()*9000)));
+  // visual twins: force at least one hidden clue to matter
+  const VIS=["coat","hat","glasses","hair","item","headphones","bag"];
+  shuffle(pax.filter(p=>p!==c)).slice(0,D.twins).forEach((p,k)=>{VIS.forEach(a=>p[a]=c[a]);if(k===0&&p.car!==c.car&&rnd()<.5){/*same car twin*/}});
+  // device regexp should not trivially match twins
+  pax.forEach(p=>{if(p!==c&&p.device&&/\d{4}$/.test(p.device)&&p.car===c.car)p.device=p.device.replace(/\d{4}$/,"")+"X"});
+}
+function clueDefs(c){
+  const S=G.seats[c.seat],carNo=CARS[c.car].no;
+  const L=[];
+  const col=COATS.find(x=>x[0]===c.coat);L.push({k:"coat",vis:true,label:"외투 · "+col[1],text:col[3],test:p=>p.coat===c.coat});
+  const h=HATS.find(x=>x[0]===c.hat);L.push({k:"hat",vis:true,label:h[1],text:h[2],test:p=>p.hat===c.hat});
+  L.push({k:"glasses",vis:true,label:c.glasses?"안경 씀":"안경 없음",text:c.glasses?"나는 세상을 렌즈 너머로 본다.":"안경 같은 건 쓰지 않는다. 내 눈은 좋으니까.",test:p=>p.glasses===c.glasses});
+  const hr=HAIRS.find(x=>x[0]===c.hair);L.push({k:"hair",vis:true,label:hr[1],text:hr[3],test:p=>p.hair===c.hair});
+  const it=ITEMS.find(x=>x[0]===c.item);L.push({k:"item",vis:true,label:"손에 · "+it[1],text:it[2],test:p=>p.item===c.item});
+  L.push({k:"headphones",vis:true,label:c.headphones?"헤드폰 씀":"헤드폰 없음",text:c.headphones?"아무것도 들리지 않는다. 헤드폰을 썼으니까.":"헤드폰은 안 썼다. 네 발소리가 다 들린다.",test:p=>p.headphones===c.headphones});
+  const b=BAGS.find(x=>x[0]===c.bag);L.push({k:"bag",vis:true,label:b[1],text:b[2],test:p=>p.bag===c.bag});
+  if(!S.cafe){L.push({k:"side",vis:true,label:S.side==="window"?"창가 좌석":"통로 좌석",text:S.side==="window"?"창가 자리에서 어둠을 내다보고 있다.":"통로 쪽 자리다. 네가 지나가면 손이 닿을 거리지.",test:p=>!G.seats[p.seat].cafe&&G.seats[p.seat].side===S.side});
+    L.push({k:"facing",vis:true,label:S.facing==="fwd"?"순방향 좌석":"역방향 좌석",text:S.facing==="fwd"?"나는 이 열차가 달려가는 쪽을 보고 앉아 있다.":"나는 종착역을 등지고 앉아 있다.",test:p=>G.seats[p.seat].facing===S.facing&&!G.seats[p.seat].cafe})}
+  if(carNo){L.push({k:"parity",vis:true,car:true,label:`${carNo%2?"홀수":"짝수"} 호차`,text:`내 칸 번호는 ${carNo%2?"홀수":"짝수"}다.`,test:p=>CARS[p.car].no!=null&&CARS[p.car].no%2===carNo%2});
+    L.push({k:"half",vis:true,car:true,label:carNo<=3?"카페칸 앞쪽":"카페칸 뒤쪽",text:carNo<=3?"나는 카페칸보다 앞쪽, 기관실에 더 가까이 있다.":"나는 카페칸보다 뒤쪽에 있다.",test:p=>CARS[p.car].no!=null&&(CARS[p.car].no<=3)===(carNo<=3)})}
+  else L.push({k:"cafe",vis:true,car:true,label:"카페칸",text:"나는 번호가 없는 칸에 있다.",test:p=>CARS[p.car].t==="cafe"});
+  if(c.hand==="left")L.push({k:"hand",vis:false,label:"왼손잡이",text:"나는 왼손잡이다. 이 글도 왼손으로 쓴다.",test:p=>p.hand==="left",how:"자세히 관찰"});
+  L.push({k:"station",vis:false,label:c.station+"역 승차",text:`나는 ${c.station}에서 탔다. 승차권을 보면 알겠지.`,test:p=>p.station===c.station,how:"승차권 확인"});
+  L.push({k:"device",vis:false,wifi:true,label:"기기 이름 끝 숫자 4개",text:"내 휴대폰 이름 끝에는 숫자 네 개가 붙어 있다. 열차 와이파이를 뒤져 봐.",test:p=>!!p.device&&/\d{4}$/.test(p.device),how:"열차 Wi-Fi"});
+  return L;
+}
+function genClues(){
+  for(let attempt=0;attempt<60;attempt++){
+    const c=G.pax[G.culprit];const defs=clueDefs(c);
+    const vis=shuffle(defs.filter(d=>d.vis&&!d.car)),car=shuffle(defs.filter(d=>d.car)),hid=shuffle(defs.filter(d=>!d.vis));
+    let cand=G.pax.slice();const chosen=[];
+    const tryAdd=d=>{const nc=cand.filter(d.test);if(nc.length<cand.length){cand=nc;chosen.push(d);return true}return false};
+    for(const d of vis){if(cand.length<=1+G.D.twins)break;tryAdd(d)}
+    tryAdd(car[0]);
+    for(const d of vis){if(cand.length<=1+G.D.twins)break;if(!chosen.includes(d))tryAdd(d)}
+    for(const d of hid){if(cand.length<=1)break;tryAdd(d)}
+    for(const d of car.slice(1)){if(cand.length<=1)break;tryAdd(d)}
+    for(const d of vis){if(cand.length<=1)break;if(!chosen.includes(d))tryAdd(d)}
+    if(cand.length===1){
+      // pad to at least 5 clues with true (redundant) ones
+      const rest=shuffle(defs.filter(d=>!chosen.includes(d)&&d.vis));while(chosen.length<5&&rest.length)chosen.splice(Math.min(chosen.length,2),0,rest.pop());
+      // order: visual first, then car, then hidden (hidden revealed last keeps tension)
+      const ord=chosen.filter(d=>d.vis&&!d.car).concat(chosen.filter(d=>d.car)).concat(chosen.filter(d=>!d.vis));
+      // put the car clue in the middle of the visual run
+      const firstCar=ord.findIndex(d=>d.car);if(firstCar>2){const [cc]=ord.splice(firstCar,1);ord.splice(2,0,cc)}
+      G.clues=ord;return}
+    // not unique: nudge remaining candidates' coats away from the culprit's
+    cand.filter(p=>p.i!==G.culprit).forEach(p=>{p.coat=pick(COATS.filter(x=>x[0]!==c.coat))[0]})
+  }
+}
+const COMMENTS=["이거 실화임? 107호 탄 사람 있음?","기사 떴다. 한빛 107호 통제 불능이래","경찰 뭐함","와이파이 목록 같은 거 열차에서 볼 수 있지 않나","단서 정리하는 사람 없냐","주작 같은데…","제발 누가 좀 잡아줘","글 쓴 시간 보면 지금도 열차 안임","방금 뉴스 속보 나옴","저거 비상 브레이크 당기면 조금은 느려지지 않음?"];
+function buildPosts(){
+  const D=G.D,P=[];let t=6;
+  P.push({t,author:"레일고스트",real:true,text:"한빛 107호는 이제 내 것이다. 종착역 차막이 벽까지 멈추지 않는다. 나는 이 열차 안, 너희 사이에 앉아 있다. 단서를 하나씩 주지. 내 글에는 언제나 ◆ 표시가 붙는다. ◆",comments:[pick(COMMENTS),"◆가 서명이라고?"]});
+  G.clues.forEach((c,k)=>{t+= (k===0?14:D.interval)+Math.floor(rnd()*8);P.push({t,author:"레일고스트",real:true,text:c.text+" ◆",clue:c,comments:shuffle(COMMENTS.slice()).slice(0,1+Math.floor(rnd()*2))})});
+  // decoys from copycat
+  const c=G.pax[G.culprit];
+  const fakes=[c.glasses?"안경은 안 쓴다.":"나는 안경을 썼다.",c.hat==="cap"?"모자는 안 썼다.":"야구모자를 썼다.",c.headphones?"헤드폰은 없다.":"헤드폰을 쓰고 있다.","내 외투는 "+pick(COATS.filter(x=>x[0]!==c.coat))[1]+"이다."];
+  for(let k=0;k<D.decoys;k++){const at=P[2+k*2]?P[2+k*2].t+Math.floor(D.interval/2):t+20;P.push({t:at,author:"레일고스트_",real:false,text:pick(fakes),comments:["또 단서다!","이번 거 진짜임?"]})}
+  P.sort((a,b)=>a.t-b.t);P.forEach((p,i)=>p.id=i);G.posts=P;
+}
+const shownClues=()=>(G.feed||[]).filter(p=>p.real&&p.clue).map(p=>p.clue);
+function matchesShown(p,visOnly){return shownClues().every(c=>(visOnly&&!c.vis)?true:c.test(p))}
+
+/* ====================================================================
+   AUDIO — all synthesized (no files, original score)
+   ==================================================================== */
+const AUD=(()=>{
+  let ctx=null,master,buses={},rev,noiseBuf,brownBuf,amb=null,musicOn=false,sched=null,nextBeat=0,beatIdx=0;
+  const saved=(()=>{try{return JSON.parse(localStorage.getItem("train107-audio"))||{}}catch(e){return{}}})();
+  const vol={master:saved.master??.8,music:saved.music??.5,sfx:saved.sfx??.8,amb:saved.amb??.6};let muted=!!saved.muted;
+  const mtof=m=>440*Math.pow(2,(m-69)/12),R=(a,b)=>a+Math.random()*(b-a);
+  const persist=()=>{try{localStorage.setItem("train107-audio",JSON.stringify({...vol,muted}))}catch(e){}};
+  const mood={tension:0,speed:0,tunnel:0,ending:0};
+  function makeIR(sec,dec){const len=ctx.sampleRate*sec,b=ctx.createBuffer(2,len,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,dec)}return b}
+  function init(){
+    if(ctx){if(ctx.state!=="running")ctx.resume();return true}
+    try{ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return false}
+    const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=3.5;comp.connect(ctx.destination);
+    master=ctx.createGain();master.connect(comp);rev=ctx.createConvolver();rev.buffer=makeIR(1.6,2.8);const rg=ctx.createGain();rg.gain.value=.45;rev.connect(rg).connect(master);
+    [["music",.3],["sfx",.18],["amb",.05]].forEach(([k,s])=>{const g=ctx.createGain();g.connect(master);const sg=ctx.createGain();sg.gain.value=s;g.connect(sg).connect(rev);buses[k]=g});
+    const n=ctx.sampleRate*2;noiseBuf=ctx.createBuffer(1,n,ctx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+    brownBuf=ctx.createBuffer(1,n,ctx.sampleRate);const b=brownBuf.getChannelData(0);let l=0;for(let i=0;i<n;i++){l=(l+.02*(Math.random()*2-1))/1.02;b[i]=l*3.5}
+    applyVol();return true}
+  function applyVol(){if(!ctx)return;const t=ctx.currentTime;master.gain.setTargetAtTime(muted?0:vol.master,t,.05);for(const k in buses)buses[k].gain.setTargetAtTime(vol[k],t,.05)}
+  const ok=()=>ctx&&ctx.state==="running",now=()=>ctx.currentTime;
+  function env(g,t,p,a,d){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,p),t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d)}
+  function tone(f,{t=now(),type="sine",gain=.1,att=.005,dec=.2,bus="sfx",fEnd=null,lp=null}={}){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(fEnd)o.frequency.exponentialRampToValueAtTime(fEnd,t+att+dec);let n=o;if(lp){const fl=ctx.createBiquadFilter();fl.type="lowpass";fl.frequency.value=lp;o.connect(fl);n=fl}n.connect(g).connect(buses[bus]);env(g,t,gain,att,dec);o.start(t);o.stop(t+att+dec+.05)}
+  function noise(dur,{t=now(),type="bandpass",f=1000,fEnd=null,Q=1,gain=.1,att=.003,bus="sfx",buf}={}){const s=ctx.createBufferSource();s.buffer=buf||noiseBuf;const fl=ctx.createBiquadFilter();fl.type=type;fl.frequency.setValueAtTime(f,t);if(fEnd)fl.frequency.exponentialRampToValueAtTime(fEnd,t+dur);fl.Q.value=Q;const g=ctx.createGain();s.connect(fl).connect(g).connect(buses[bus]);env(g,t,gain,att,Math.max(.01,dur-att));s.start(t,Math.random()*1.5);s.stop(t+dur+.05)}
+  const S={
+    hover(){if(!ok())return;tone(1900,{gain:.03,dec:.04})},
+    click(){if(!ok())return;noise(.03,{f:2800,Q:1.2,gain:.11});tone(900,{gain:.03,dec:.04,type:"triangle"})},
+    open(){if(!ok())return;tone(520,{gain:.05,dec:.08,type:"triangle"});tone(780,{t:now()+.05,gain:.04,dec:.1,type:"triangle"})},
+    close(){if(!ok())return;tone(700,{gain:.04,dec:.07,type:"triangle"});tone(470,{t:now()+.05,gain:.035,dec:.08,type:"triangle"})},
+    notify(real){if(!ok())return;const t=now();tone(1318,{t,gain:.09,dec:.18});tone(1760,{t:t+.11,gain:.08,dec:.3});
+      if(real)for(let k=0;k<6;k++)tone(R(200,1800),{t:t+.35+k*.035,type:"square",gain:.025,dec:.03,lp:3000})},
+    vibrate(){if(!ok())return;const t=now();for(let k=0;k<2;k++)noise(.18,{t:t+k*.26,type:"lowpass",f:160,gain:.25})},
+    step(run){if(!ok())return;const v=(run?1.2:1)*R(.85,1.1);noise(.11,{type:"lowpass",f:R(380,520),gain:.13*v,att:.01});tone(R(80,95),{gain:.07*v,dec:.08})},
+    pull(){if(!ok())return;const t=now();noise(.06,{t,f:2400,Q:3,gain:.25});tone(140,{t,gain:.3,dec:.25,fEnd:70,type:"triangle"});noise(1.4,{t:t+.1,type:"highpass",f:3000,gain:.12,att:.05});noise(2.2,{t:t+.2,f:2600,fEnd:1700,Q:8,gain:.07,att:.2})},
+    observe(){if(!ok())return;tone(660,{gain:.04,dec:.12,type:"triangle"})},
+    good(){if(!ok())return;const t=now();[64,67,71,76].forEach((m,i)=>tone(mtof(m),{t:t+i*.09,type:"triangle",gain:.08,dec:1.2,lp:3200,bus:"music"}))},
+    wrong(){if(!ok())return;const t=now();tone(110,{t,type:"sawtooth",gain:.12,dec:.5,lp:900});tone(104,{t,type:"sawtooth",gain:.12,dec:.5,lp:900});noise(.3,{t,type:"lowpass",f:400,gain:.2})},
+    arrest(){if(!ok())return;const t=now();tone(55,{t,gain:.4,dec:1.6,fEnd:32});noise(.5,{t,type:"lowpass",f:280,gain:.3});[52,59,64,71].forEach((m,i)=>tone(mtof(m),{t:t+.3+i*.06,type:"sawtooth",gain:.03,att:.2,dec:2.2,lp:1600,bus:"music"}))},
+    alarm(){if(!ok())return;const t=now();tone(880,{t,type:"square",gain:.035,dec:.12,lp:2200});tone(660,{t:t+.16,type:"square",gain:.03,dec:.12,lp:2200})},
+    screech(){if(!ok())return;const t=now();for(let k=0;k<3;k++)noise(6,{t:t+k*.4,f:R(2400,3200),fEnd:R(900,1400),Q:14,gain:.09,att:.3});noise(7,{t,type:"lowpass",f:600,fEnd:120,gain:.25,att:.2})},
+    crash(){if(!ok())return;const t=now();tone(48,{t,gain:.8,dec:2.5,fEnd:22});noise(2.8,{t,type:"lowpass",f:2400,fEnd:200,gain:.9});for(let k=0;k<14;k++)noise(R(.05,.25),{t:t+R(.1,2.2),f:R(800,6000),Q:R(1,6),gain:R(.1,.35)})},
+    glitch(){if(!ok())return;const t=now();for(let k=0;k<10;k++)tone(R(120,2600),{t:t+k*.03,type:"square",gain:.03,dec:.025,lp:4000})},
+    success(){if(!ok())return;const t=now();[52,59,64,68,71,76].forEach((m,i)=>tone(mtof(m),{t:t+i*.16,type:"triangle",gain:.07,dec:3,lp:3000,bus:"music"}))}
+  };
+  /* ---- train ambience: rumble, wind, rail joints ---- */
+  function startAmb(){if(!ctx||amb)return;amb={};
+    const mk=(buf,type,f,Q)=>{const s=ctx.createBufferSource();s.buffer=buf;s.loop=true;const fl=ctx.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=Q||.7;const g=ctx.createGain();g.gain.value=0;s.connect(fl).connect(g).connect(buses.amb);s.start();return{g,fl}};
+    amb.rumble=mk(brownBuf,"lowpass",160);amb.wind=mk(noiseBuf,"bandpass",700,.5);amb.hiss=mk(noiseBuf,"highpass",4000);amb.acc=0}
+  function update(dt,kmh,inTunnel,inside){
+    if(!ok()||!amb)return;const sf=Math.min(1,kmh/V_MAX),t=now();
+    amb.rumble.g.gain.setTargetAtTime((.35+.45*sf)*(inTunnel?1.5:1),t,.3);amb.rumble.fl.frequency.setTargetAtTime(120+120*sf+(inTunnel?60:0),t,.3);
+    amb.wind.g.gain.setTargetAtTime((.02+.08*sf)*(inTunnel?2.2:1)*(inside?1:3),t,.3);amb.wind.fl.frequency.setTargetAtTime(500+700*sf,t,.3);
+    amb.hiss.g.gain.setTargetAtTime(.006+.02*sf,t,.3);
+    if(kmh>5){amb.acc+=dt*(kmh/3.6)/25;if(amb.acc>=1){amb.acc-=1;[0,.11].forEach((o,k)=>{noise(.07,{t:t+o,type:"lowpass",f:420,gain:(.18+.12*sf)*(k?.8:1),bus:"amb"});tone(70,{t:t+o,gain:.12,dec:.07,bus:"amb"})})}}
+  }
+  /* ---- music: original E-minor pulse; tempo & layers follow the countdown ---- */
+  const PROG=[[40,47,52,55],[36,43,48,52],[38,45,50,54],[35,42,47,51]];
+  function step16(t,i){
+    const bar=Math.floor(i/16),s=i%16,ch=PROG[bar%4],te=mood.tension;
+    if(mood.ending){if(s===0)ch.forEach(m=>tone(mtof(m+12),{t,type:"triangle",gain:.03,att:.4,dec:3,lp:1400,bus:"music"}));return}
+    // bass 8ths
+    if(s%2===0)tone(mtof(ch[0]-12+(s===6||s===14?7:0)),{t,type:"sawtooth",gain:.07,att:.005,dec:.18,lp:300+400*te,bus:"music"});
+    // pulse arp
+    if(s%2===1||te>.6){const m=ch[(s>>1)%4]+12+(s>=8?12:0);tone(mtof(m),{t,type:"square",gain:.012+.01*te,dec:.11,lp:1800+1500*te,bus:"music"})}
+    // pad at bar start
+    if(s===0)ch.slice(1).forEach(m=>{tone(mtof(m),{t,type:"sawtooth",gain:.014,att:.6,dec:2.4,lp:900,bus:"music"})});
+    // drums when tense
+    if(te>.25){if(s%4===0)tone(58,{t,gain:.25*te,dec:.14,fEnd:38,bus:"music"});if(s%2===1)noise(.03,{t,type:"highpass",f:7000,gain:.035*te,bus:"music"});if(s===4||s===12)noise(.12,{t,f:1800,Q:.7,gain:.08*te,bus:"music"})}
+    // hacker motif every 4 bars
+    if(bar%4===3&&(s===0||s===3||s===6||s===10))tone(mtof([76,79,78,71][[0,3,6,10].indexOf(s)]),{t,type:"triangle",gain:.03,dec:.5,lp:2600,bus:"music"});
+  }
+  function tick(){if(!musicOn||!ok())return;const bpm=112+38*mood.tension,sp=60/bpm/4;if(nextBeat<now())nextBeat=now()+.05;while(nextBeat<now()+.3){step16(nextBeat,beatIdx++);nextBeat+=sp}}
+  function startMusic(){if(!ctx)return;musicOn=true;nextBeat=now()+.2;if(!sched)sched=setInterval(tick,50)}
+  function stopMusic(){musicOn=false}
+  Object.assign(S,{init,applyVol,persist,vol,mood,startAmb,update,startMusic,stopMusic,ready:()=>!!ctx});
+  Object.defineProperty(S,"muted",{get(){return muted},set(v){muted=v;applyVol();persist()}});
+  Object.defineProperty(S,"musicOn",{get(){return musicOn}});
+  return S;
+})();
+
+/* ====================================================================
+   3D ENGINE — batching per car + instancing for every repeated thing
+   ==================================================================== */
+const QS={low:{pr:1,seg:10,std:false,aa:false,lights:400,hills:30},med:{pr:1.5,seg:16,std:true,aa:true,lights:800,hills:50},high:{pr:2,seg:24,std:true,aa:true,lights:1400,hills:80}};
+let QK="med",Q=QS.med;
+let renderer,scene,cam,hemi,moon,stationLight,POOL=[];
+const MATS={},BATCH={},INST={},HOT={},HOTGROUPS=[],LAMPS=[],CROWD={},DISPLAYS=[];
+let rayBlockers=[],shell,station,tunnel,masts,mastLamps,ptsGeo,hills,groundTex,ballastTex,consoleScreen;
+const _q=new THREE.Quaternion(),_e=new THREE.Euler(),_m=new THREE.Matrix4(),_v=new THREE.Vector3(),_s=new THREE.Vector3();
+function M4(x,y,z,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1){_e.set(rx,ry,rz);_q.setFromEuler(_e);return new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),_q,new THREE.Vector3(sx,sy,sz))}
+function box(w,h,d,uvs){const g=new THREE.BoxGeometry(w,h,d);if(uvs){const uv=g.attributes.uv,dm=[[d,h],[d,h],[w,d],[w,d],[w,h],[w,h]];for(let f=0;f<6;f++)for(let v=0;v<4;v++){const i=f*4+v;uv.setXY(i,uv.getX(i)*dm[f][0]/uvs,uv.getY(i)*dm[f][1]/uvs)}}return g}
+function lathe(pts,seg){return new THREE.LatheGeometry(pts.map(p=>new THREE.Vector2(p[0],p[1])),seg||Q.seg)}
+function cyl(rt,rb,h,seg,open){return new THREE.CylinderGeometry(rt,rb,h,seg||Q.seg,1,!!open)}
+function sph(r,seg,ps,pl,ts,tl){return new THREE.SphereGeometry(r,seg||Q.seg,Math.max(6,Math.round((seg||Q.seg)*.7)),ps,pl,ts,tl)}
+function plane(w,h,ru,rv){const g=new THREE.PlaneGeometry(w,h);if(ru){const uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*ru,uv.getY(i)*rv)}return g}
+function clean(g){let x=g.index?g.toNonIndexed():g;if(x!==g)g.dispose();for(const k of Object.keys(x.attributes))if(k!=="position"&&k!=="normal"&&k!=="uv")x.deleteAttribute(k);if(!x.attributes.uv)x.setAttribute("uv",new THREE.BufferAttribute(new Float32Array(x.attributes.position.count*2),2));x.clearGroups();return x}
+function put(geo,mat,key,m){if(m)geo.applyMatrix4(m);const k=key+"|"+mat;(BATCH[k]||(BATCH[k]=[])).push(clean(geo))}
+function mergeParts(parts){return THREE.BufferGeometryUtils.mergeBufferGeometries(parts.map(([g,m])=>{if(m)g.applyMatrix4(m);return clean(g)}),false)}
+function flushBatch(){for(const key in BATCH){const[grp,mat]=key.split("|");const g=THREE.BufferGeometryUtils.mergeBufferGeometries(BATCH[key],false);BATCH[key].forEach(x=>x.dispose());g.computeBoundingSphere();const mesh=new THREE.Mesh(g,MATS[mat]);mesh.matrixAutoUpdate=false;(grp==="shell"?shell:scene).add(mesh);if(grp==="parts")rayBlockers.push(mesh);delete BATCH[key]}}
+function inst(kind,m,c){(INST[kind]||(INST[kind]=[])).push({m,c:c!=null?new THREE.Color(c):null})}
+const INSTDEF={
+  pillar:()=>[box(1,1,1),"wallLow"],bracket:()=>[box(1,1,1),"chrome"],btn:()=>[cyl(1,1,1,10),"inst"],led:()=>[box(1,1,1),"instGlow"],
+  stool:()=>[lathe([[0,0],[.18,0],[.17,.02],[.03,.05],[.025,.6],[.17,.62],[.18,.66],[0,.67]]),"inst"],jar:()=>[lathe([[0,0],[.5,0],[.55,.1],[.55,.8],[.3,.95],[.32,1.05],[0,1.05]],10),"inst"],
+  locker:()=>[box(1,1,1),"inst"],ceilLamp:()=>[box(1,1,1),"led"],lamp:()=>[sph(1,10),"glowOrange"]
+};
+function flushInst(){for(const kind in INST){const list=INST[kind];if(!list.length)continue;const[geo,mat]=INSTDEF[kind]();const m=new THREE.InstancedMesh(geo,MATS[mat],list.length);list.forEach((it,i)=>{m.setMatrixAt(i,it.m);m.setColorAt(i,it.c||new THREE.Color(0xffffff))});m.instanceMatrix.needsUpdate=true;m.instanceColor.needsUpdate=true;m.frustumCulled=false;scene.add(m)}}
+function ctex(w,h,draw,srgb=true,rep=true){const c=document.createElement("canvas");c.width=w;c.height=h;draw(c.getContext("2d"),w,h);const t=new THREE.CanvasTexture(c);if(rep)t.wrapS=t.wrapT=THREE.RepeatWrapping;if(srgb)t.encoding=THREE.sRGBEncoding;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());t.userData={canvas:c};return t}
+function mk(o){const Mt=Q.std?THREE.MeshStandardMaterial:THREE.MeshLambertMaterial;const p={color:new THREE.Color(o.c??0xffffff)};if(o.map)p.map=o.map;if(o.e!=null){p.emissive=new THREE.Color(o.e);p.emissiveIntensity=o.ei??1;if(o.emap)p.emissiveMap=o.emap}if(o.op!=null){p.transparent=true;p.opacity=o.op;p.depthWrite=false}if(Q.std){p.roughness=o.r??.8;p.metalness=o.m??0}if(o.side)p.side=o.side;if(o.vc)p.vertexColors=true;return new Mt(p)}
+function lamp(x,y,z,col,int,car){LAMPS.push({x,y,z,col:new THREE.Color(col),int,car})}
+
+function buildMaterials(){
+  const carpet=ctex(256,256,(g,w,h)=>{g.fillStyle="#1a1617";g.fillRect(0,0,w,h);for(let i=0;i<4000;i++){g.fillStyle=`rgba(${rnd()<.5?0:80},${rnd()*20},${rnd()*20},.18)`;g.fillRect(rnd()*w,rnd()*h,2,2)}g.strokeStyle="rgba(150,30,34,.45)";g.lineWidth=3;for(let y=0;y<h;y+=64)for(let x=0;x<w;x+=64){g.beginPath();g.moveTo(x+32,y+12);g.lineTo(x+52,y+32);g.lineTo(x+32,y+52);g.lineTo(x+12,y+32);g.closePath();g.stroke()}});
+  const runner=ctex(128,256,(g,w,h)=>{g.fillStyle="#3a0b0e";g.fillRect(0,0,w,h);g.fillStyle="#d8641a";g.fillRect(8,0,3,h);g.fillRect(w-11,0,3,h);for(let i=0;i<1800;i++){g.fillStyle=`rgba(0,0,0,${rnd()*.25})`;g.fillRect(rnd()*w,rnd()*h,2,2)}});
+  const fabric=ctex(128,128,(g,w,h)=>{g.fillStyle="#7a1116";g.fillRect(0,0,w,h);for(let y=0;y<h;y+=4){g.fillStyle=y%8?"rgba(0,0,0,.12)":"rgba(255,120,80,.05)";g.fillRect(0,y,w,2)}for(let i=0;i<900;i++){g.fillStyle=`rgba(0,0,0,${rnd()*.2})`;g.fillRect(rnd()*w,rnd()*h,1,1)}});
+  const panel=ctex(256,256,(g,w,h)=>{g.fillStyle="#2a2629";g.fillRect(0,0,w,h);g.strokeStyle="rgba(0,0,0,.45)";g.lineWidth=2;for(let x=0;x<w;x+=64){g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke()}for(let i=0;i<800;i++){g.fillStyle=`rgba(255,255,255,${rnd()*.03})`;g.fillRect(rnd()*w,rnd()*h,2,2)}});
+  const ground=ctex(512,512,(g,w,h)=>{g.fillStyle="#0b0d0c";g.fillRect(0,0,w,h);for(let i=0;i<14;i++){g.fillStyle=`hsl(${80+rnd()*40},${10+rnd()*15}%,${3+rnd()*4}%)`;g.fillRect(0,rnd()*h,w,20+rnd()*90)}for(let i=0;i<5000;i++){g.fillStyle=`rgba(255,255,255,${rnd()*.03})`;g.fillRect(rnd()*w,rnd()*h,2,2)}g.strokeStyle="rgba(0,0,0,.4)";for(let x=0;x<w;x+=38){g.beginPath();g.moveTo(x,0);g.lineTo(x+rnd()*10,h);g.stroke()}});
+  const ballast=ctex(128,256,(g,w,h)=>{g.fillStyle="#23201e";g.fillRect(0,0,w,h);for(let i=0;i<3500;i++){const v=20+rnd()*45;g.fillStyle=`rgb(${v},${v-3},${v-6})`;g.fillRect(rnd()*w,rnd()*h,2+rnd()*2,2+rnd()*2)}for(let y=0;y<h;y+=64){g.fillStyle="#3a3431";g.fillRect(6,y+20,w-12,22);g.fillStyle="rgba(0,0,0,.35)";g.fillRect(6,y+40,w-12,3)}});
+  const concrete=ctex(256,256,(g,w,h)=>{g.fillStyle="#2b2a29";g.fillRect(0,0,w,h);for(let i=0;i<4000;i++){g.fillStyle=`rgba(${rnd()<.5?0:255},${rnd()<.5?0:255},${rnd()<.5?0:255},.03)`;g.fillRect(rnd()*w,rnd()*h,3,3)}g.strokeStyle="rgba(0,0,0,.5)";for(let y=0;y<h;y+=64){g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke()}});
+  const stripes=ctex(128,64,(g,w,h)=>{for(let i=-2;i<8;i++){g.fillStyle=i%2?"#e9e3d8":"#d3262c";g.beginPath();g.moveTo(i*24,0);g.lineTo(i*24+24,0);g.lineTo(i*24+24-32,h);g.lineTo(i*24-32,h);g.fill()}});
+  groundTex=ground;ground.repeat.set(30,80);ballastTex=ballast;ballast.repeat.set(1,250);
+  Object.assign(MATS,{
+    carpet:mk({map:carpet,r:1}),runner:mk({map:runner,r:1}),fabric:mk({map:fabric,r:.95}),wallLow:mk({map:panel,r:.6}),wallUp:mk({c:0x2f2b2e,r:.6}),ceil:mk({c:0x4a4547,r:.85}),trim:mk({c:0x0f0e10,r:.4}),
+    chrome:mk({c:0x9a9aa0,r:.25,m:.9}),dark:mk({c:0x151416,r:.5}),white:mk({c:0xe6e0d6,r:.7}),headcover:mk({c:0xd8d2c8,r:.9}),rack:mk({c:0x1a1a1e,r:.15,m:.3}),
+    glass:mk({c:0x8aa0b8,op:.12,r:.05}),led:mk({c:0x000000,e:0xffe6c8,ei:1.4}),glowOrange:mk({c:0x000000,e:0xff8a2a,ei:1.6}),glowRed:mk({c:0x000000,e:0xff2a2a,ei:1.6}),
+    red:mk({c:0xc81e24,r:.4}),yellow:mk({c:0xe8b81a,r:.5}),screen:mk({c:0x000000,e:0x56d6ff,ei:.8}),
+    ground:mk({map:ground,r:1}),ballast:mk({map:ballast,r:1}),rail:mk({c:0x8a8a90,r:.3,m:.9}),concrete:mk({map:concrete,r:1,side:THREE.BackSide}),concreteF:mk({map:concrete,r:1}),
+    shell:mk({c:0x16151a,r:.35,m:.4}),shellRed:mk({c:0xc81e24,r:.35,m:.3}),shellWin:mk({c:0x000000,e:0xffcf9a,ei:.9}),shellDark:mk({c:0x070708,r:.3}),stripes:mk({map:stripes,r:.6}),
+    inst:mk({c:0xffffff,r:.7}),instGlow:new THREE.MeshBasicMaterial({color:0xffffff}),
+    hill:mk({c:0x07090a,r:1}),
+  });
+}
+
+/* ---------- interior ---------- */
+const W=1.5,HC=2.4;
+function buildCar(k){
+  const c=CARS[k],z0=k*CAR_LEN,zc=z0+CAR_LEN/2,key="c"+k;
+  put(plane(2*W,CAR_LEN,2*W/1.2,CAR_LEN/1.2),"carpet",key,M4(0,0,zc,-Math.PI/2));
+  if(c.t!=="cab")put(plane(.8,CAR_LEN,1,CAR_LEN/2),"runner",key,M4(0,.004,zc,-Math.PI/2));
+  [-1,1].forEach(s=>{const x=s*W;
+    put(box(.08,.88,CAR_LEN,1),"wallLow",key,M4(x,.44,zc));put(box(.08,.5,CAR_LEN,1),"wallUp",key,M4(x,1.92,zc));
+    put(box(.2,.04,CAR_LEN),"trim",key,M4(x-s*.1,.89,zc));put(box(.12,.16,CAR_LEN),"dark",key,M4(x-s*.06,.08,zc));
+    put(plane(CAR_LEN,.8),"glass",key,M4(x-s*.02,1.27,zc,0,-s*Math.PI/2));
+    for(let z=z0+.98;z<z0+CAR_LEN;z+=1.96)inst("pillar",M4(x-s*.03,1.27,z,0,0,0,.1,.8,.2),0x231f22);
+    put(box(.66,.04,CAR_LEN),"ceil",key,M4(s*1.18,2.27,zc,0,0,s*.38));
+    put(box(.38,.02,CAR_LEN),"rack",key,M4(s*1.26,1.88,zc));put(cyl(.012,.012,CAR_LEN,8),"chrome",key,M4(s*1.08,1.9,zc,Math.PI/2));
+    for(let z=z0+1;z<z0+CAR_LEN;z+=2)inst("bracket",M4(s*1.36,1.95,z,0,0,s*.6,.03,.18,.03),0x9a9aa0);
+    put(box(.05,.02,CAR_LEN),"led",key,M4(s*.62,HC-.02,zc));
+  });
+  put(box(1.9,.04,CAR_LEN),"ceil",key,M4(0,HC,zc));
+  for(let z=z0+2.5;z<z0+CAR_LEN;z+=5)lamp(0,HC-.25,z,0xffe2c4,1.05,k);
+  // partitions with door opening at z0 (front of car) — the cab front is the windshield instead
+  if(k>0){[-1,1].forEach(s=>put(box(1.05,HC,.12),"wallLow","parts",M4(s*.975,HC/2,z0)));put(box(.9,HC-2.0,.12),"wallLow","parts",M4(0,2.0+(HC-2.0)/2,z0));
+    [-1,1].forEach(s=>put(box(.05,2.0,.16),"trim",key,M4(s*.47,1.0,z0)));put(box(.98,.05,.16),"trim",key,M4(0,2.02,z0));put(box(.9,.02,.14),"glowOrange",key,M4(0,2.06,z0));
+    // displays: front partition faces into this car, back side faces the previous car
+    addDisplay(k,0,2.22,z0+.065,0);addDisplay(k-1,0,2.22,z0-.065,Math.PI);
+  }
+  if(k===CARS.length-1){put(box(2*W,HC,.12),"wallLow","parts",M4(0,HC/2,z0+CAR_LEN))}
+  if(k>0)addBrake(k,z0);
+  if(c.t==="seat")seatCar(k);if(c.t==="cafe")cafeCar(k);if(c.t==="cab")cabCar(k);
+}
+function addDisplay(k,x,y,z,ry){if(k<0)return;const tex=ctex(512,96,()=>{},true,false);const m=new THREE.Mesh(plane(.84,.16),new THREE.MeshBasicMaterial({map:tex,toneMapped:false}));m.position.set(x,y,z);m.rotation.y=ry;scene.add(m);DISPLAYS.push({k,tex})}
+function drawDisplays(){DISPLAYS.forEach(d=>{const g=d.tex.userData.canvas.getContext("2d");g.fillStyle="#050304";g.fillRect(0,0,512,96);g.font="700 40px 'Noto Sans KR',sans-serif";g.fillStyle="#ff7a1a";g.textBaseline="middle";g.fillText(CARS[d.k].n,18,50);g.font="700 34px 'Courier Prime',monospace";g.fillStyle=G.T<60&&G.phase==="play"?"#ff3a3a":"#ffd2a8";g.textAlign="right";const msg=G.phase==="play"||G.phase==="intro"?`${Math.round(G.speed)} km/h · 충돌 ${fmtT(G.T)}`:G.phase==="won"?"정차":"—";g.fillText(msg,494,50);g.textAlign="left";d.tex.needsUpdate=true})}
+function addBrake(k,z0){const g=new THREE.Group();g.position.set(.78,0,z0+.08);
+  const add=(geo,mat,x,y,z,rx=0)=>{const m=new THREE.Mesh(geo,MATS[mat]);m.position.set(x,y,z);m.rotation.x=rx;g.add(m);return m};
+  add(box(.28,.36,.02),"yellow",0,1.45,0);add(box(.24,.32,.022),"dark",0,1.45,.002);add(box(.16,.05,.05),"red",0,1.52,.03);add(cyl(.018,.018,.18,8),"red",0,1.43,.05,0);
+  const lbl=ctex(128,64,(c,w,h)=>{c.fillStyle="#e8b81a";c.fillRect(0,0,w,h);c.fillStyle="#111";c.font="900 22px 'Noto Sans KR',sans-serif";c.textAlign="center";c.fillText("비상정지",w/2,28);c.font="700 14px 'Courier Prime',monospace";c.fillText("EMERGENCY",w/2,50)},true,false);
+  const pm=new THREE.Mesh(plane(.24,.12),new THREE.MeshBasicMaterial({map:lbl}));pm.position.set(0,1.72,.012);g.add(pm);
+  scene.add(g);registerHot("brake:"+k,g,"brake")}
+function registerHot(id,g,kind){g.userData.hot=id;HOT[id]={id,group:g,kind};HOTGROUPS.push(g)}
+
+/* seat geometry, local facing +z */
+let SEATGEO=null;
+function seatGeos(){if(SEATGEO)return SEATGEO;
+  SEATGEO={cushion:mergeParts([[box(.46,.12,.48),M4(0,.42,.02)]]),
+    back:mergeParts([[box(.46,.72,.1),M4(0,.82,-.22,-.12)],[box(.46,.08,.14),M4(0,1.2,-.26,-.12)]]),
+    cover:mergeParts([[box(.4,.16,.025),M4(0,1.09,-.158,-.12)]]),
+    frame:mergeParts([[box(.44,.06,.42),M4(0,.33,0)],[box(.08,.3,.3),M4(0,.15,-.02)],[box(.06,.06,.42),M4(-.25,.62,0)],[box(.06,.06,.42),M4(.25,.62,0)],[box(.04,.22,.04),M4(-.25,.5,.15)],[box(.04,.22,.04),M4(.25,.5,.15)],[box(.42,.02,.3),M4(0,.72,-.31,.2)]])};
+  return SEATGEO}
+function seatCar(k){/* seats are instanced globally in buildSeats */}
+function buildSeats(){
+  const sg=seatGeos(),list=G.seats.filter(s=>!s.cafe);const meshes={};
+  [["cushion","fabric"],["back","fabric"],["cover","headcover"],["frame","dark"]].forEach(([p,mat])=>{const m=new THREE.InstancedMesh(sg[p],MATS[mat],list.length);list.forEach((s,i)=>m.setMatrixAt(i,M4(s.x,0,s.z,0,s.yaw,0)));m.instanceMatrix.needsUpdate=true;m.frustumCulled=false;scene.add(m);meshes[p]=m})}
+function cafeCar(k){const z0=k*CAR_LEN,key="c"+k;
+  // counter on +x side
+  put(box(.55,1.0,5),"dark",key,M4(1.2,.5,z0+5.5));put(box(.62,.05,5.1),"red",key,M4(1.18,1.02,z0+5.5));
+  put(box(.4,.5,.4),"chrome",key,M4(1.25,1.3,z0+4.2));put(box(.3,.25,.3),"dark",key,M4(1.25,1.18,z0+6.6));for(let i=0;i<6;i++)inst("jar",M4(1.3,1.05,z0+3.4+i*.18,0,0,0,.04,.08,.04),[0xd8641a,0xe6e0d6,0x7a1116][i%3]);
+  const menu=ctex(512,256,(g,w,h)=>{g.fillStyle="#080506";g.fillRect(0,0,w,h);g.fillStyle="#ff7a1a";g.font="900 42px 'Noto Sans KR',sans-serif";g.fillText("CAFÉ 107",24,60);g.font="500 28px 'Noto Sans KR',sans-serif";g.fillStyle="#f3ece6";["아메리카노  3,500","라떼  4,000","도시락  7,500","호두과자  5,000"].forEach((t,i)=>g.fillText(t,24,112+i*38))},true,false);
+  const mm=new THREE.Mesh(plane(1.1,.55),new THREE.MeshBasicMaterial({map:menu,toneMapped:false}));mm.position.set(1.44,1.55,z0+5.5);mm.rotation.y=-Math.PI/2;scene.add(mm);
+  // vending machine
+  put(box(.6,1.8,.8),"dark",key,M4(-1.15,.9,z0+4.2));put(plane(.62,1.2),"glowOrange",key,M4(-.84,1.05,z0+4.2,0,Math.PI/2));
+  [9.2,12.4,15.6].forEach(tz=>[-1,1].forEach(sx=>{put(box(.6,.04,.72),"red",key,M4(sx*1.04,.74,z0+tz));put(cyl(.04,.06,.72,12),"chrome",key,M4(sx*1.04,.37,z0+tz));[-1,1].forEach(sz=>inst("stool",M4(sx*1.02,0,z0+tz+sz*.62,0,0,0,1,.7,1),0x2a2629))}));
+}
+function cabCar(k){const key="c0";
+  // windshield & nose interior
+  put(plane(2.9,1.6),"glass",key,M4(0,1.55,.42,-.42));put(box(3,.9,.3),"dark",key,M4(0,.45,.2));
+  [-1,1].forEach(s=>put(box(.12,1.6,.12),"trim",key,M4(s*1.4,1.55,.42,-.42)));put(box(3,.12,.2),"trim",key,M4(0,2.33,.75));
+  // console (hotspot)
+  const g=new THREE.Group();g.position.set(0,0,1.0);
+  const add=(geo,mat,x,y,z,rx=0,ry=0,rz=0)=>{const m=new THREE.Mesh(geo,typeof mat==="string"?MATS[mat]:mat);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);g.add(m);return m};
+  add(box(2.6,.85,.7),"dark",0,.42,0);add(box(2.6,.06,.62),"trim",0,.88,.02,-.35);
+  consoleScreen=ctex(512,256,()=>{},true,false);
+  add(plane(.7,.36),new THREE.MeshBasicMaterial({map:consoleScreen,toneMapped:false}),0,1.08,-.06,-.35);
+  [-.85,.85].forEach(x=>add(plane(.5,.3),"screen",x,1.04,-.04,-.35));
+  add(cyl(.02,.02,.3,10),"chrome",.55,1.05,.18,.6);add(sph(.045,12),"red",.55,1.18,.25);add(cyl(.02,.02,.3,10),"chrome",-.55,1.05,.18,.6);add(sph(.045,12),"chrome",-.55,1.18,.25);
+  for(let i=0;i<14;i++)add(cyl(.018,.018,.02,10),i%3?"chrome":"glowRed",-.4+i*.06,.93,.18,-.35);
+  scene.add(g);registerHot("console",g,"console");
+  // driver seat
+  put(box(.55,.12,.55),"fabric",key,M4(-.5,.55,2.2));put(box(.55,.8,.12),"fabric",key,M4(-.5,1.0,2.48));put(cyl(.06,.08,.5,10),"chrome",key,M4(-.5,.25,2.2));
+  // inner partition at z=6
+  [-1,1].forEach(s=>put(box(1.05,HC,.12),"wallLow","parts",M4(s*.975,HC/2,6)));put(box(.9,.4,.12),"wallLow","parts",M4(0,2.2,6));
+  // crew area lockers & cabinets
+  for(let z=7;z<19;z+=.62)[-1,1].forEach(s=>inst("locker",M4(s*1.22,.95,z,0,0,0,.5,1.9,.58),s<0?0x26232a:0x1d1b21));
+  for(let z=7.2;z<19;z+=.62)[-1,1].forEach(s=>{for(let j=0;j<3;j++)inst("led",M4(s*.96,1.4+j*.12,z,0,0,0,.02,.02,.02),[0xff2a2a,0x5fbf7a,0xff8a2a][(Math.floor(z*3)+j)%3])});
+  lamp(0,1.7,1.4,0x56d6ff,.6,0);
+}
+
+/* ---------- crowd (instanced) ---------- */
+const PARTS=["coat","pants","skin","shoes","hair","cap","beanie","glasses","headphones","phone","coffee","book","laptop","backpack","briefcase","mark"];
+let CROWDGEO=null;
+function crowdGeos(){if(CROWDGEO)return CROWDGEO;const s=Q.seg;
+  const arm=(sx)=>[[cyl(.058,.052,.3,s),M4(sx*.23,.93,0,.35,0,sx*.12)],[cyl(.048,.044,.28,s),M4(sx*.2,.74,.18,1.35,0,sx*.05)]];
+  CROWDGEO={
+    coat:mergeParts([[lathe([[0,.46],[.2,.48],[.21,.66],[.19,.86],[.22,1.0],[.16,1.08],[.07,1.11],[0,1.11]],s),M4(0,0,-.08)],...arm(-1),...arm(1)]),
+    pants:mergeParts([[cyl(.075,.07,.42,s),M4(-.1,.47,.14,Math.PI/2)],[cyl(.075,.07,.42,s),M4(.1,.47,.14,Math.PI/2)],[cyl(.06,.055,.44,s),M4(-.1,.24,.36)],[cyl(.06,.055,.44,s),M4(.1,.24,.36)]]),
+    skin:mergeParts([[sph(.105,s),M4(0,1.25,-.06,0,0,0,1,1.13,1.03)],[cyl(.045,.05,.1,s),M4(0,1.13,-.07)],[sph(.04,s),M4(-.12,.68,.34)],[sph(.04,s),M4(.12,.68,.34)]]),
+    shoes:mergeParts([[sph(.06,s),M4(-.1,.04,.42,0,0,0,1,.6,1.8)],[sph(.06,s),M4(.1,.04,.42,0,0,0,1,.6,1.8)]]),
+    hair:mergeParts([[sph(.113,s,0,Math.PI*2,0,Math.PI*.52),M4(0,1.265,-.07)]]),
+    cap:mergeParts([[sph(.118,s,0,Math.PI*2,0,Math.PI*.48),M4(0,1.28,-.065)],[cyl(.11,.11,.012,s),M4(0,1.29,.05,0,0,0,1,1,1)]]),
+    beanie:mergeParts([[sph(.122,s,0,Math.PI*2,0,Math.PI*.55),M4(0,1.27,-.065,0,0,0,1,1.08,1)],[new THREE.TorusGeometry(.112,.018,6,s),M4(0,1.255,-.065,Math.PI/2)]]),
+    glasses:mergeParts([[new THREE.TorusGeometry(.03,.005,6,14),M4(-.042,1.27,.045)],[new THREE.TorusGeometry(.03,.005,6,14),M4(.042,1.27,.045)],[box(.025,.006,.006),M4(0,1.272,.047)],[box(.006,.006,.12),M4(-.1,1.272,-.01)],[box(.006,.006,.12),M4(.1,1.272,-.01)]]),
+    headphones:mergeParts([[new THREE.TorusGeometry(.125,.014,6,s,Math.PI),M4(0,1.27,-.065)],[cyl(.045,.045,.04,s),M4(-.118,1.25,-.065,0,0,Math.PI/2)],[cyl(.045,.045,.04,s),M4(.118,1.25,-.065,0,0,Math.PI/2)]]),
+    phone:mergeParts([[box(.075,.15,.01),M4(.1,.74,.38,-.9,0,.2)]]),
+    coffee:mergeParts([[lathe([[0,0],[.035,0],[.042,.12],[0,.12]],12),M4(-.12,.68,.36)],[cyl(.044,.044,.012,12),M4(-.12,.81,.36)]]),
+    book:mergeParts([[box(.15,.012,.22),M4(-.08,.67,.34,-.5,0,.12)],[box(.15,.012,.22),M4(.08,.67,.34,-.5,0,-.12)]]),
+    laptop:mergeParts([[box(.34,.02,.24),M4(0,.6,.24)],[box(.34,.22,.012),M4(0,.71,.36,-.25)]]),
+    backpack:mergeParts([[box(.28,.36,.16),M4(0,.18,.56)],[sph(.14,s),M4(0,.36,.56,0,0,0,1,.4,.6)]]),
+    briefcase:mergeParts([[box(.1,.3,.4),M4(-.3,.15,.25)],[new THREE.TorusGeometry(.04,.01,6,10,Math.PI),M4(-.3,.31,.25,0,Math.PI/2)]]),
+    mark:new THREE.OctahedronGeometry(.07,0)
+  };return CROWDGEO}
+const ITEMCOL={phone:0x0d0d10,coffee:0xe6dccb,book:0x7a1116,laptop:0x55555c,backpack:0x1d1d22,briefcase:0x3a2416};
+function buildCrowd(){const geo=crowdGeos(),n=G.pax.length;
+  PARTS.forEach(p=>{const mat=p==="mark"?new THREE.MeshBasicMaterial({color:0xffffff}):mk({c:0xffffff,r:p==="glasses"||p==="phone"?.3:.85});const m=new THREE.InstancedMesh(geo[p],mat,n);m.frustumCulled=false;m.userData.part=p;scene.add(m);CROWD[p]=m});
+  G.pax.forEach(p=>placePax(p));PARTS.forEach(p=>{CROWD[p].instanceMatrix.needsUpdate=true});applyAllPax();
+}
+const ZERO=new THREE.Matrix4().makeScale(0,0,0);
+function placePax(p){const s=G.seats[p.seat];const base=M4(s.x,0,s.z,0,s.yaw,0);p.base=base;
+  const show={coat:1,pants:1,skin:1,shoes:1,hair:1,cap:p.hat==="cap",beanie:p.hat==="beanie",glasses:p.glasses,headphones:p.headphones&&p.hat!=="beanie",phone:p.item==="phone",coffee:p.item==="coffee",book:p.item==="book",laptop:p.item==="laptop",backpack:p.bag==="backpack",briefcase:p.bag==="briefcase",mark:0};
+  PARTS.forEach(part=>CROWD[part].setMatrixAt(p.i,show[part]?base:ZERO));
+}
+function setMark(p){const s=G.seats[p.seat];const on=p.suspect||(G.arrested&&p.i===G.culprit);CROWD.mark.setMatrixAt(p.i,on?M4(s.x,1.62,s.z):ZERO);CROWD.mark.setColorAt(p.i,new THREE.Color(G.arrested&&p.i===G.culprit?0xd3262c:0xff7a1a));CROWD.mark.instanceMatrix.needsUpdate=true;CROWD.mark.instanceColor.needsUpdate=true}
+const _c=new THREE.Color(),_orange=new THREE.Color(0xff7a1a);
+function paxColors(p){const coat=COATS.find(c=>c[0]===p.coat)[2],hair=HAIRS.find(h=>h[0]===p.hair)[2];
+  return{coat,pants:p.pants,skin:p.skin,shoes:0x0d0b0b,hair,cap:p.hatCol,beanie:p.hatCol,glasses:0x0a0a0a,headphones:p.hpCol,phone:ITEMCOL.phone,coffee:ITEMCOL.coffee,book:ITEMCOL.book,laptop:ITEMCOL.laptop,backpack:ITEMCOL.backpack,briefcase:ITEMCOL.briefcase,mark:0xff7a1a}}
+function applyPax(p,hover){const cols=paxColors(p);const dim=p.excluded||(G.D.dim&&p.autoDim);
+  PARTS.forEach(part=>{if(part==="mark")return;_c.setHex(cols[part]);if(dim)_c.multiplyScalar(.16);if(hover&&(part==="coat"||part==="pants"))_c.lerp(_orange,.45);CROWD[part].setColorAt(p.i,_c);CROWD[part].instanceColor.needsUpdate=true});setMark(p)}
+function applyAllPax(){G.pax.forEach(p=>applyPax(p,false))}
+
+/* ---------- exterior: shell, scenery ---------- */
+function buildShell(){shell=new THREE.Group();shell.visible=false;scene.add(shell);
+  const prof=new THREE.Shape();const w=1.6,b=-.65,t=2.75,r=.7;prof.moveTo(-w,b);prof.lineTo(w,b);prof.lineTo(w,t-r);prof.quadraticCurveTo(w,t,w-r,t);prof.lineTo(-w+r,t);prof.quadraticCurveTo(-w,t,-w,t-r);prof.lineTo(-w,b);
+  CARS.forEach((c,k)=>{const z0=k*CAR_LEN;const eg=new THREE.ExtrudeGeometry(prof,{depth:CAR_LEN-.5,bevelEnabled:false,curveSegments:Q.seg>>1});put(eg,"shell","shell",M4(0,0,z0+.25));
+    [-1,1].forEach(s=>{put(plane(CAR_LEN-1.5,.62),"shellWin","shell",M4(s*1.605,1.28,z0+CAR_LEN/2,0,s*Math.PI/2));put(plane(CAR_LEN-.5,.16),"shellRed","shell",M4(s*1.606,.62,z0+CAR_LEN/2,0,s*Math.PI/2));put(plane(CAR_LEN-.5,.04),"glowOrange","shell",M4(s*1.607,.5,z0+CAR_LEN/2,0,s*Math.PI/2))});
+    [3,CAR_LEN-3].forEach(bz=>{put(box(2.4,.6,2.6),"shellDark","shell",M4(0,-.9,z0+bz));[-1,1].forEach(s=>[-.9,.9].forEach(o=>put(cyl(.42,.42,.12,Q.seg),"shellDark","shell",M4(s*.78,-.95,z0+bz+o,0,0,Math.PI/2))))});
+    if(k===1||k===6){put(box(.1,.5,.1),"chrome","shell",M4(0,3.0,z0+8));put(box(1.4,.05,.1),"chrome","shell",M4(0,3.25,z0+8.4,.5))}
+  });
+  // nose
+  const nose=sph(1.6,Q.seg*2,0,Math.PI*2,0,Math.PI/2);put(nose,"shell","shell",M4(0,1.05,.25,-Math.PI/2,0,0,1,3.8,1.05));
+  put(sph(1.62,Q.seg*2,0,Math.PI*2,0,Math.PI/2),"shellRed","shell",M4(0,.5,.24,-Math.PI/2,0,0,1.005,3.85,.35));
+  [-1,1].forEach(s=>put(sph(.18,12),"led","shell",M4(s*.62,.48,-4.7,0,0,0,1.6,.6,1)));
+  put(plane(2.2,.9),"shellWin","shell",M4(0,1.75,-1.6,-1.0));
+}
+function buildScenery(){
+  const g=new THREE.Mesh(plane(1600,3000),MATS.ground);g.rotation.x=-Math.PI/2;g.position.set(0,-1.5,-600);scene.add(g);
+  const b=new THREE.Mesh(plane(5,1000),MATS.ballast);b.rotation.x=-Math.PI/2;b.position.set(0,-1.25,-200);scene.add(b);
+  [-.72,.72].forEach(x=>put(box(.08,.14,1000),"rail","scen",M4(x,-1.12,-200)));
+  put(box(.02,.02,1200),"chrome","scen",M4(0,3.6,-300));
+  // catenary masts (instanced, recycled)
+  const mg=mergeParts([[cyl(.12,.15,8.5,8),M4(0,2.7,0)],[box(2.6,.1,.1),M4(-1.3,5.8,0)],[box(.06,.6,.06),M4(-2.5,5.5,0)]]);
+  masts=new THREE.InstancedMesh(mg,MATS.dark,48);masts.frustumCulled=false;masts.userData.z=[];
+  mastLamps=new THREE.InstancedMesh(sph(.16,8),MATS.glowOrange,48);mastLamps.frustumCulled=false;
+  for(let i=0;i<48;i++){masts.userData.z.push(-1100+(i>>1)*50);}scene.add(masts);scene.add(mastLamps);
+  // distant lights (points)
+  const n=Q.lights,pos=new Float32Array(n*3),col=new Float32Array(n*3);for(let i=0;i<n;i++){const s=rnd()<.5?-1:1;pos[i*3]=s*(60+rnd()*900);pos[i*3+1]=-1+rnd()*(rnd()<.1?30:6);pos[i*3+2]=-2600+rnd()*3000;const w=rnd();col.set(w<.6?[1,.62,.28]:w<.85?[1,.9,.75]:[.9,.2,.18],i*3)}
+  ptsGeo=new THREE.BufferGeometry();ptsGeo.setAttribute("position",new THREE.BufferAttribute(pos,3));ptsGeo.setAttribute("color",new THREE.BufferAttribute(col,3));
+  const pts=new THREE.Points(ptsGeo,new THREE.PointsMaterial({size:2.2,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:.9,depthWrite:false}));pts.frustumCulled=false;scene.add(pts);
+  // hills
+  hills=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,7),MATS.hill,Q.hills);hills.frustumCulled=false;hills.userData.d=[];
+  for(let i=0;i<Q.hills;i++){const s=rnd()<.5?-1:1;hills.userData.d.push({x:s*(250+rnd()*900),z:-3000+rnd()*3400,w:120+rnd()*300,h:40+rnd()*140})}scene.add(hills);
+  // tunnel
+  tunnel=new THREE.Group();const L=420;const tube=new THREE.Mesh(cyl(5,5,L,Q.seg*2,true),MATS.concrete);tube.rotation.x=Math.PI/2;tube.position.y=1;tunnel.add(tube);
+  const tl=new THREE.InstancedMesh(box(.5,.12,.3),MATS.glowOrange,Math.floor(L/14)*2);let n2=0;for(let z=-L/2;z<L/2-1;z+=14)[-1,1].forEach(s=>tl.setMatrixAt(n2++,M4(s*4.6,2.6,z,0,0,s*.5)));tl.count=n2;tunnel.add(tl);
+  [-1,1].forEach(s=>{const portal=new THREE.Mesh(box(14,10,2),MATS.concreteF);portal.position.set(0,1,s*L/2);tunnel.add(portal);portal.visible=false});
+  tunnel.userData={L,z:-1400};scene.add(tunnel);
+  // station (ending)
+  station=new THREE.Group();station.visible=false;
+  [-1,1].forEach(s=>{const pf=new THREE.Mesh(box(4,1.2,300),MATS.concreteF);pf.position.set(s*4,-0.9,150);station.add(pf);const edge=new THREE.Mesh(box(.3,.02,300),MATS.yellow);edge.position.set(s*2.15,-.29,150);station.add(edge);
+    const roof=new THREE.Mesh(box(6,.2,300),MATS.dark);roof.position.set(s*4.5,5,150);station.add(roof);for(let z=10;z<300;z+=12){const l=new THREE.Mesh(box(.3,.06,2),MATS.led);l.position.set(s*4,4.85,z);station.add(l);const col=new THREE.Mesh(cyl(.12,.12,5.8,8),MATS.dark);col.position.set(s*6,2,z);station.add(col)}});
+  const buf=new THREE.Mesh(box(3,1.3,1.2),MATS.stripes);buf.position.set(0,-.4,-.6);station.add(buf);[-1,1].forEach(s=>{const lt=new THREE.Mesh(sph(.12,10),MATS.glowRed);lt.position.set(s*1.1,.4,-.1);station.add(lt)});
+  const wall=new THREE.Mesh(box(30,12,2),MATS.concreteF);wall.position.set(0,4,-3);station.add(wall);
+  const sign=ctex(1024,256,(g2,w,h)=>{g2.fillStyle="#0a0909";g2.fillRect(0,0,w,h);g2.fillStyle="#f3ece6";g2.font="900 120px 'Noto Sans KR',sans-serif";g2.fillText("해솔",40,170);g2.fillStyle="#ff7a1a";g2.font="700 60px 'Courier Prime',monospace";g2.fillText("TERMINUS · 종착",420,160)},true,false);
+  const sm=new THREE.Mesh(plane(8,2),new THREE.MeshBasicMaterial({map:sign,toneMapped:false}));sm.position.set(0,6,-1.9);station.add(sm);
+  scene.add(station);
+}
+function scroll(dz,dt){
+  groundTex.offset.y+=dz/(3000/80);ballastTex.offset.y+=dz/4;
+  const zs=masts.userData.z;for(let i=0;i<zs.length;i++){zs[i]+=dz;if(zs[i]>200)zs[i]-=1200;const s=i%2?1:-1;masts.setMatrixAt(i,M4(s*3.3,-1.5,zs[i],0,s<0?Math.PI:0,0));mastLamps.setMatrixAt(i,i%6<2?M4(s*3.0,5.1,zs[i]):ZERO)}masts.instanceMatrix.needsUpdate=true;mastLamps.instanceMatrix.needsUpdate=true;
+  const p=ptsGeo.attributes.position.array;for(let i=2;i<p.length;i+=3){p[i]+=dz;if(p[i]>500)p[i]-=3000}ptsGeo.attributes.position.needsUpdate=true;
+  hills.userData.d.forEach((h,i)=>{h.z+=dz;if(h.z>600)h.z-=3400;hills.setMatrixAt(i,M4(h.x,-1.5+h.h/2,h.z,0,0,0,h.w,h.h,h.w))});hills.instanceMatrix.needsUpdate=true;
+  const td=tunnel.userData;if(G.phase!=="won"&&G.phase!=="crash"){td.z+=dz;if(td.z-td.L/2>400)td.z=-(td.L/2+1500+rnd()*2500)}tunnel.position.z=td.z;
+  G.tunnel=Math.abs(td.z-80)<td.L/2+60;
+}
+function buildLights(){
+  hemi=new THREE.HemisphereLight(0x5a6478,0x120808,.38);scene.add(hemi);
+  moon=new THREE.DirectionalLight(0x8aa0d0,.35);moon.position.set(-40,60,-20);scene.add(moon);
+  for(let i=0;i<4;i++){const l=new THREE.PointLight(0xffe2c4,0,9,2);scene.add(l);POOL.push({l,lamp:null,cur:0})}
+  stationLight=new THREE.PointLight(0xffd2a0,0,80,1.5);scene.add(stationLight);
+}
+function updateLights(dt){
+  if(!updateLights.acc||(updateLights.acc+=dt)>.2){updateLights.acc=.001;
+    const best=LAMPS.map(L=>({L,d:(L.x-cam.position.x)**2+(L.z-cam.position.z)**2})).sort((a,b)=>a.d-b.d).slice(0,POOL.length).map(s=>s.L);
+    POOL.forEach(p=>{if(p.lamp&&!best.includes(p.lamp))p.lamp=null});
+    best.forEach(L=>{if(POOL.some(p=>p.lamp===L))return;const p=POOL.find(p=>!p.lamp);if(p){p.lamp=L;p.cur=0;p.l.position.set(L.x,L.y,L.z);p.l.color.copy(L.col)}})}
+  const flick=G.phase==="play"&&G.T<45?(.75+.25*Math.random()):1;
+  POOL.forEach(p=>{const tgt=p.lamp?p.lamp.int*flick:0;p.cur+=(tgt-p.cur)*Math.min(1,dt*6);p.l.intensity=p.cur});
+  hemi.intensity=G.tunnel?.16:.38;
+}
+function drawConsole(){if(!consoleScreen)return;const g=consoleScreen.userData.canvas.getContext("2d");g.fillStyle="#020406";g.fillRect(0,0,512,256);
+  if(G.arrested&&G.phase!=="won"){g.fillStyle="#5fbf7a";g.font="700 34px 'Courier Prime',monospace";g.fillText("OVERRIDE READY",24,60);g.fillStyle="#f3ece6";g.font="500 28px 'Noto Sans KR',sans-serif";g.fillText("제어 코드 "+G.code+" 입력 대기",24,120);g.fillStyle="#ff7a1a";g.fillText("[E] 제어권 회수",24,180)}
+  else if(G.phase==="won"){g.fillStyle="#5fbf7a";g.font="900 60px 'Courier Prime',monospace";g.fillText("STOPPED",24,140)}
+  else{const gl=Math.random()<.15;g.fillStyle=gl?"#56d6ff":"#ff3a3a";g.font="700 34px 'Courier Prime',monospace";g.fillText(gl?"SYS▓OVERR▒DE":"SYSTEM LOCKED",24+(gl?6:0),60);g.fillStyle="#f3ece6";g.font="700 64px 'Courier Prime',monospace";g.fillText(Math.round(G.speed)+" km/h",24,150);g.font="500 26px 'Noto Sans KR',sans-serif";g.fillStyle="#ffb36b";g.fillText("제어 단말기 없음 — 원격 조작 중",24,212)}
+  consoleScreen.needsUpdate=true}
+async function step(txt,p){$("loadStep").textContent=txt;$("loadBar").style.width=p+"%";await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)))}
+async function buildWorld(){
+  renderer=new THREE.WebGLRenderer({canvas:$("stage"),antialias:Q.aa,powerPreference:"high-performance"});renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+  renderer.setPixelRatio(Math.min(devicePixelRatio,Q.pr));renderer.setSize(innerWidth,innerHeight);
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x03040a);scene.fog=new THREE.FogExp2(0x04050b,.0016);
+  cam=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.05,4000);scene.add(cam);
+  await step("재질과 무늬를 그리는 중",8);buildMaterials();
+  await step("객차 8량을 연결하는 중",20);CARS.forEach((_,k)=>buildCar(k));
+  await step("좌석 "+G.seats.filter(s=>!s.cafe).length+"석 배치",36);buildSeats();
+  await step("승객 "+G.pax.length+"명 탑승",52);buildCrowd();
+  await step("차체 외관과 선로",66);buildShell();buildScenery();buildLights();
+  await step("폴리곤을 묶는 중 (드로우 콜 최적화)",84);flushBatch();flushInst();
+  await step("셰이더 준비 중",95);renderer.compile(scene,cam);drawDisplays();drawConsole();
+}
+
+/* ====================================================================
+   PLAYER, CONTROLS, INTERACTION
+   ==================================================================== */
+const player={x:0,z:110,yaw:0,pitch:0,vx:0,vz:0,bob:0,joy:null};
+const keys={};let locked=false,dragging=false,lastX=0,lastY=0,downX=0,downY=0,hovered=null,sens=1,perfOn=false;
+const isTouch=matchMedia("(pointer:coarse)").matches,RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let panelOpen=null,phoneOpen=false,modalKind=null;
+const uiBlocked=()=>!!panelOpen||phoneOpen||!!modalKind;
+const paused=()=>G.pausedMenu||(G.D&&G.D.pauseUI&&uiBlocked());
+function carAt(z){return Math.max(0,Math.min(CARS.length-1,Math.floor(z/CAR_LEN)))}
+function walkable(x,z){if(z<.9||z>CARS.length*CAR_LEN-.4)return false;const k=carAt(z),lz=z-k*CAR_LEN,c=CARS[k];
+  if((lz<.2&&k>0)||lz>CAR_LEN-.2)return Math.abs(x)<.34;
+  if(c.t==="seat")return lz>2.05&&lz<17.95?Math.abs(x)<.4:Math.abs(x)<1.25;
+  if(c.t==="cafe"){if(lz>2.8&&lz<8.4&&x>.85)return false;if(lz>3.7&&lz<4.7&&x<-.8)return false;return lz>8.3?Math.abs(x)<.62:Math.abs(x)<1.25}
+  if(lz<1.75)return false;if(Math.abs(lz-6)<.2)return Math.abs(x)<.34;if(lz>1.8&&lz<2.65&&x<-.15&&x>-.9)return false;return Math.abs(x)<(lz>6?.62:1.25)}
+function look(dx,dy){player.yaw-=dx*.0022*sens;player.pitch=Math.max(-1.2,Math.min(1.2,player.pitch-dy*.0022*sens))}
+function releaseMouse(){if(document.pointerLockElement)try{document.exitPointerLock()}catch(e){}for(const k in keys)keys[k]=false}
+function bindControls(){const cv=$("stage");
+  cv.addEventListener("mousedown",e=>{if(uiBlocked()||G.phase!=="play")return;dragging=true;lastX=downX=e.clientX;lastY=downY=e.clientY;if(locked&&hovered)interact()});
+  addEventListener("mouseup",e=>{if(!dragging)return;dragging=false;if(locked||uiBlocked())return;if(Math.hypot(e.clientX-downX,e.clientY-downY)<5){if(hovered)interact();else{try{const p=cv.requestPointerLock();if(p&&p.catch)p.catch(()=>{})}catch(err){}}}});
+  addEventListener("mousemove",e=>{if(uiBlocked()||G.phase!=="play")return;let dx=0,dy=0;if(locked){dx=e.movementX;dy=e.movementY}else if(dragging){dx=e.clientX-lastX;dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY}else return;look(dx,dy)});
+  document.addEventListener("pointerlockchange",()=>{locked=document.pointerLockElement===cv;$("lookHint").classList.toggle("hidden",locked)});
+  addEventListener("keydown",e=>{
+    if(e.code==="Space"&&G.phase==="intro"){e.preventDefault();skipCine();return}
+    if(e.key==="Escape"){if(modalKind&&modalKind!=="result"){closeModal();return}if(phoneOpen){togglePhone(false);return}if(panelOpen){closePanel();return}if(G.phase==="play")openMenu();return}
+    if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT")return;
+    if(G.phase!=="play")return;
+    if(e.code==="KeyP"){togglePhone();return}
+    if(modalKind||panelOpen){if(e.code==="KeyM"&&modalKind==="map")closeModal();return}
+    if(phoneOpen)return;
+    keys[e.code]=true;
+    if(e.code==="KeyE"&&hovered){e.preventDefault();interact()}
+    if(e.code==="KeyM")openMap();
+    if(e.code==="KeyQ"&&hovered&&hovered.startsWith("p:"))toggleSuspect(+hovered.slice(2));
+    if(e.code==="KeyX"&&hovered&&hovered.startsWith("p:"))toggleExclude(+hovered.slice(2));
+  });
+  addEventListener("keyup",e=>{keys[e.code]=false});addEventListener("blur",()=>{for(const k in keys)keys[k]=false});
+  let joyId=null,joyO=null,lookId=null,lx=0,ly=0;const joy=$("joy"),knob=$("joyKnob");
+  cv.addEventListener("touchstart",e=>{AUD.init();for(const t of e.changedTouches){if(t.clientX<innerWidth*.45&&joyId===null){joyId=t.identifier;joyO=[t.clientX,t.clientY];joy.style.left=(t.clientX-60)+"px";joy.style.top=(t.clientY-60)+"px";joy.style.bottom="auto"}else if(lookId===null){lookId=t.identifier;lx=t.clientX;ly=t.clientY}}},{passive:true});
+  cv.addEventListener("touchmove",e=>{for(const t of e.changedTouches){if(t.identifier===joyId){let dx=t.clientX-joyO[0],dy=t.clientY-joyO[1];const d=Math.hypot(dx,dy);if(d>50){dx*=50/d;dy*=50/d}knob.style.transform=`translate(${dx}px,${dy}px)`;player.joy=[dx/50,dy/50]}else if(t.identifier===lookId){look((t.clientX-lx)*1.4,(t.clientY-ly)*1.4);lx=t.clientX;ly=t.clientY}}},{passive:true});
+  const end=e=>{for(const t of e.changedTouches){if(t.identifier===joyId){joyId=null;player.joy=null;knob.style.transform=""}if(t.identifier===lookId)lookId=null}};cv.addEventListener("touchend",end);cv.addEventListener("touchcancel",end);
+  $("useBtn").addEventListener("click",()=>{if(hovered)interact()});
+}
+function move(dt){
+  if(uiBlocked()||G.phase!=="play")return;
+  let fx=0,fz=0;if(keys.KeyW||keys.ArrowUp)fz+=1;if(keys.KeyS||keys.ArrowDown)fz-=1;if(keys.KeyA||keys.ArrowLeft)fx-=1;if(keys.KeyD||keys.ArrowRight)fx+=1;
+  if(player.joy){fx+=player.joy[0];fz-=player.joy[1]}
+  const len=Math.hypot(fx,fz);const run=keys.ShiftLeft||keys.ShiftRight;const sp=(run?4.4:2.5)*(len>1?1/len:1);
+  const sy=Math.sin(player.yaw),cy=Math.cos(player.yaw);const tx=(-sy*fz+cy*fx)*sp,tz=(-cy*fz-sy*fx)*sp;
+  player.vx+=(tx-player.vx)*Math.min(1,dt*10);player.vz+=(tz-player.vz)*Math.min(1,dt*10);
+  const nx=player.x+player.vx*dt,nz=player.z+player.vz*dt;
+  if(walkable(nx,player.z))player.x=nx;else player.vx=0;if(walkable(player.x,nz))player.z=nz;else player.vz=0;
+  const spd=Math.hypot(player.vx,player.vz);if(spd>.2){const b0=Math.floor(player.bob/Math.PI);player.bob+=dt*spd*3.3;if(Math.floor(player.bob/Math.PI)!==b0)AUD.step(run)}
+}
+const ray=new THREE.Raycaster(),c0=new THREE.Vector2(0,0);
+function updateHover(){
+  if(uiBlocked()||G.phase!=="play"){setHover(null);return}
+  ray.setFromCamera(c0,cam);ray.far=3.4;
+  const targets=[CROWD.coat,CROWD.skin,CROWD.pants].concat(HOTGROUPS,rayBlockers);
+  const hits=ray.intersectObjects(targets,true);let id=null;
+  for(const h of hits){if(h.object.isInstancedMesh&&h.object.userData.part){id="p:"+h.instanceId;break}let o=h.object;while(o&&!o.userData.hot)o=o.parent;if(o)id=o.userData.hot;break}
+  if(id&&id.startsWith("brake:")&&G.brakes.has(+id.slice(6)))id=null;
+  if(!id){const fx=-Math.sin(player.yaw)*Math.cos(player.pitch),fy=Math.sin(player.pitch),fz=-Math.cos(player.yaw)*Math.cos(player.pitch);let best=null,bd=9;
+    for(const p of G.pax){if(Math.abs(G.seats[p.seat].z-player.z)>3)continue;const s=G.seats[p.seat];const dx=s.x-cam.position.x,dy=1.0-cam.position.y,dz=s.z-cam.position.z;const d=Math.hypot(dx,dy,dz);if(d>2.8)continue;const dot=(dx*fx+dy*fy+dz*fz)/d;if(dot>.94&&d<bd){bd=d;best=p}}
+    if(best)id="p:"+best.i}
+  setHover(id);
+}
+function setHover(id){
+  if(id===hovered)return;
+  const prev=hovered;hovered=id;
+  if(prev&&prev.startsWith("p:"))applyPax(G.pax[+prev.slice(2)],false);
+  if(prev&&HOT[prev])HOT[prev].group.traverse(o=>{if(o.isMesh&&o.userData.e0){o.material.emissive.copy(o.userData.e0);o.material.emissiveIntensity=o.userData.ei0}});
+  $("crosshair").classList.toggle("on",!!id);$("useBtn").style.display=id&&isTouch?"block":"none";
+  if(!id){$("prompt").classList.add("hidden");return}
+  AUD.hover();let txt="";
+  if(id.startsWith("p:")){const p=G.pax[+id.slice(2)];applyPax(p,true);txt=`<b>${esc(p.name)}</b> <small>${esc(G.seats[p.seat].label)} · 관찰</small> ${p.suspect?'<span class="tagx sus">용의자</span>':""}${p.excluded?'<span class="tagx">제외</span>':""}${G.arrested&&p.i===G.culprit?'<span class="tagx sus">체포됨</span>':""} <small>· Q 표시 · X 제외</small>`}
+  else{HOT[id].group.traverse(o=>{if(o.isMesh&&o.material.emissive){if(!o.userData.e0){o.material=o.material.clone();o.userData.e0=o.material.emissive.clone();o.userData.ei0=o.material.emissiveIntensity}o.material.emissive.setHex(0xff5a10);o.material.emissiveIntensity=.45}});
+    txt=id==="console"?(G.arrested?"<b>제어반</b> <small>· 제어권 회수</small>":"<b>제어반</b> <small>· 잠김</small>"):`<b>비상 브레이크</b> <small>· +${G.D.brake}초</small>`}
+  $("promptTxt").innerHTML=txt;$("prompt").classList.remove("hidden");
+}
+function interact(){if(!hovered||G.phase!=="play")return;
+  if(hovered.startsWith("p:")){openPanel(+hovered.slice(2));return}
+  if(hovered.startsWith("brake:")){pullBrake(+hovered.slice(6));return}
+  if(hovered==="console"){if(G.arrested)startEnding();else{toast("제어반이 잠겨 있다. 범인의 단말기가 있어야 제어권을 되찾을 수 있다.");AUD.wrong()}}
+}
+
+/* ====================================================================
+   GAME ACTIONS
+   ==================================================================== */
+function spend(sec,why){if(sec<=0)return;G.T-=sec;if(why)toast(`${why} · −${sec}초`)}
+function toggleSuspect(i){const p=G.pax[i];p.suspect=!p.suspect;if(p.suspect)p.excluded=false;applyPax(p,hovered==="p:"+i);AUD.click();toast(p.suspect?`${p.name} — 용의자로 표시`:`${p.name} — 표시 해제`,true);hovered=null;updateHover();refreshUI()}
+function toggleExclude(i){const p=G.pax[i];if(G.arrested&&i===G.culprit)return;p.excluded=!p.excluded;if(p.excluded)p.suspect=false;applyPax(p,false);AUD.click();toast(p.excluded?`${p.name} — 제외`:`${p.name} — 다시 후보로`,true);hovered=null;updateHover();refreshUI()}
+function pullBrake(k){if(G.brakes.has(k))return;G.brakes.add(k);G.T+=G.D.brake;G.speedDip=1;AUD.pull();toast(`비상 브레이크! 열차가 잠시 감속했다 · +${G.D.brake}초`,true);
+  setTimeout(()=>addFeed({author:"레일고스트",real:true,text:pick(["브레이크? 늦출 뿐이지, 멈추진 못해. ◆","손잡이 하나 당겼다고 영웅이 된 것 같나? ◆","좋아, 조금 더 놀아 주지. ◆"])}),1800);setHover(null);refreshUI()}
+const panelReport={};
+function openPanel(i){AUD.open();panelOpen=i;releaseMouse();G.observed.add(i);renderPanel();$("panel").classList.remove("hidden")}
+function closePanel(){if(panelOpen!=null)AUD.close();panelOpen=null;$("panel").classList.add("hidden")}
+function paxChips(p){const ch=[],shown=shownClues(),m=G.D.match;
+  const add=(txt,k,hid)=>{const hit=m&&shown.some(c=>c.k===k&&c.test(p));ch.push(`<span class="chip ${hid?"hid":""} ${hit?"match":""}">${esc(txt)}</span>`)};
+  const s=G.seats[p.seat];
+  add("외투 "+COATS.find(c=>c[0]===p.coat)[1],"coat");add(HATS.find(h=>h[0]===p.hat)[1],"hat");add(p.glasses?"안경":"안경 없음","glasses");add(HAIRS.find(h=>h[0]===p.hair)[1],"hair");
+  add("손에 "+ITEMS.find(x=>x[0]===p.item)[1],"item");add(p.headphones?"헤드폰":"헤드폰 없음","headphones");add(BAGS.find(b=>b[0]===p.bag)[1],"bag");
+  if(!s.cafe){add(s.side==="window"?"창가":"통로","side");add(s.facing==="fwd"?"순방향":"역방향","facing")}
+  const ck=G.checked[p.i]||{};
+  if(ck.obs)add(p.hand==="left"?"왼손잡이":"오른손잡이","hand",true);
+  if(ck.ticket)add(p.station+"역 승차","station",true);
+  if(ck.phone)add(p.refuse?"휴대폰 거부":p.device?"기기: "+p.device:"휴대폰 없음","device",true);
+  return ch.join("")}
+function renderPanel(){const i=panelOpen;if(i==null)return;const p=G.pax[i],s=G.seats[p.seat],ck=G.checked[i]||(G.checked[i]={}),D=G.D;const isC=G.arrested&&i===G.culprit;
+  $("pCrumb").innerHTML=`<span>한빛 107</span><span>›</span><span>${CARS[p.car].n}</span><span>›</span><b>${esc(s.label)}</b>`;
+  let h=`<div><h2>${esc(p.name)}</h2><div class="desc">${p.age}세 · ${esc(s.label)}${p.suspect?' · <b style="color:var(--orange)">용의자 표시</b>':""}${p.excluded?" · 제외됨":""}</div></div><div class="chips">${paxChips(p)}</div>`;
+  if(panelReport[i])h+=`<div class="report"><div class="rh">${panelReport[i].h}</div>${panelReport[i].b}</div>`;
+  if(isC){h+=`<div class="report" style="border-left-color:var(--ok)"><div class="rh">체포 완료</div>제어 단말기를 압수했다. 코드 <b class="mono">${G.code}</b>. 기관실(맨 앞)로 가서 제어권을 되찾아라.</div>`;$("pBody").innerHTML=h;return}
+  h+=`<div class="acts">
+   <button class="act ${ck.obs?"done":""}" data-a="obs"><span>자세히 관찰한다</span><span class="t">${D.obs?D.obs+"초":"즉시"}</span></button>
+   <button class="act ${ck.ticket?"done":""}" data-a="ticket"><span>승차권을 보여 달라고 한다</span><span class="t">${D.ticket}초</span></button>
+   <button class="act ${ck.phone?"done":""}" data-a="phone"><span>휴대폰 기기 이름을 확인한다</span><span class="t">${D.phone}초</span></button>
+  </div><div class="twocol"><button class="act" data-a="sus"><span>${p.suspect?"표시 해제":"용의자 표시"}</span><span class="t">Q</span></button><button class="act" data-a="exc"><span>${p.excluded?"후보로 복귀":"후보에서 제외"}</span><span class="t">X</span></button></div>`;
+  if(G.arrestConfirm===i)h+=`<div class="confirm"><b>${esc(p.name)}을(를) 체포할까?</b><span class="desc">틀리면 범인이 열차를 더 빨리 몬다 (−${D.penalty}초).</span><div class="twocol"><button class="btn btn-ghost" data-a="cancel">취소</button><button class="btn btn-cta" data-a="arrestGo">체포한다</button></div></div>`;
+  else h+=`<button class="act danger" data-a="arrest"><span><b>체포한다</b></span><span class="t">틀리면 −${D.penalty}초</span></button>`;
+  $("pBody").innerHTML=h;
+}
+$("pBody").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b||panelOpen==null)return;const i=panelOpen,p=G.pax[i],ck=G.checked[i],D=G.D,a=b.dataset.a;
+  const rep=(head,body)=>{panelReport[i]={h:head,b:body};AUD.observe()};
+  if(a==="obs"&&!ck.obs){spend(D.obs);ck.obs=1;const hand=p.hand==="left";
+    const how={phone:hand?"휴대폰을 왼손에 쥐고 엄지로 화면을 넘긴다.":"휴대폰을 오른손에 쥐고 있다.",coffee:hand?"커피를 왼손으로 들어 마신다.":"커피를 오른손으로 든다.",book:hand?"왼손으로 책장을 넘긴다.":"오른손으로 책장을 넘긴다.",laptop:hand?"트랙패드를 왼손으로 쓴다.":"오른손으로 트랙패드를 문지른다.",none:hand?"손목시계를 오른손목에 찼다. 왼손잡이들이 흔히 그런다.":"손목시계를 왼손목에 찼다."}[p.item];
+    rep("자세히 관찰",`<p>${how}</p><p>${p.i===G.culprit?"눈이 마주치자 휴대폰 화면을 엎는다.":pick(["피곤해 보인다.","창밖을 멍하니 본다.","당신을 힐끗 보고 고개를 돌린다.","조용히 숨을 고른다."])}</p>`)}
+  if(a==="ticket"&&!ck.ticket){spend(D.ticket);ck.ticket=1;rep("승차권 확인",`<p>“여기요.” 승차권: <b>${p.station} → 해솔</b>, ${esc(G.seats[p.seat].label)}.</p>`)}
+  if(a==="phone"&&!ck.phone){spend(D.phone);ck.phone=1;rep("휴대폰 확인",p.refuse?`<p>“제 폰을 왜 보여 드려야 하죠?” 단호하게 거절한다.</p>`:p.device?`<p>설정 화면을 보여 준다. 기기 이름 <b class="mono">${esc(p.device)}</b>.</p>`:`<p>“휴대폰을 집에 두고 왔어요.”</p>`)}
+  if(a==="sus")toggleSuspect(i);if(a==="exc")toggleExclude(i);
+  if(a==="arrest"){G.arrestConfirm=i;AUD.click()}if(a==="cancel")G.arrestConfirm=null;
+  if(a==="arrestGo"){G.arrestConfirm=null;doArrest(i)}
+  renderPanel();refreshUI();
+});
+$("pClose").addEventListener("click",closePanel);
+function doArrest(i){const p=G.pax[i];
+  if(i===G.culprit){G.arrested=true;G.code=p.device.slice(-4);p.suspect=false;applyPax(p,false);AUD.arrest();flash(.35);
+    addFeed({author:"레일고스트",real:true,text:"…잡았다고 생각하나? 열차는 아직 달리고 있다. ◆"});
+    toast(`${p.name} 체포! 제어 단말기 확보 · 코드 ${G.code}`,"ok");setObjective("NEW OBJECTIVE","기관실(맨 앞)로 가서 제어반에서 제어권을 회수하라");drawConsole();G.dollyZoom=1}
+  else{G.wrong++;p.excluded=true;applyPax(p,false);spend(G.D.penalty);AUD.wrong();toast(`오인 체포 — ${p.name}은(는) 범인이 아니다. 열차가 더 빨라졌다 · −${G.D.penalty}초`);
+    setTimeout(()=>addFeed({author:"레일고스트",real:true,text:pick(["틀렸어. 엉뚱한 사람 손목에 수갑을 채웠군. ◆","하하. 다시 해 봐. 시간이 없을 텐데. ◆","그 사람은 그냥 집에 가던 길이었어. ◆"])}),1500)}
+}
+
+/* ====================================================================
+   FEED (internet board) & PHONE
+   ==================================================================== */
+G.feed=[];
+function addFeed(post,silent){post.ts=fmtT(G.T);post.idx=G.feed.length;G.feed.push(post);G.unread++;if(post.clue)G.shownClueList=null;
+  if(!silent){AUD.notify(post.real);AUD.vibrate();notif(post)}
+  if(G.D.dim&&post.real&&post.clue&&post.clue.vis){G.pax.forEach(p=>{p.autoDim=!matchesShown(p,true)});applyAllPax()}
+  refreshUI();if(phoneOpen)renderPhone()}
+function shownCluesFeed(){return G.feed.filter(p=>p.real&&p.clue).map(p=>p.clue)}
+function notif(p){if(phoneOpen)return;const old=$("toasts").querySelectorAll(".notif");if(old.length>1)old[0].remove();const t=document.createElement("div");t.className="toast acc notif";t.innerHTML=`<span class="h">새 글 · ${esc(p.author)}${p.real?" ◆":""}</span><span>${esc(p.text.length>70?p.text.slice(0,70)+"…":p.text)}</span>`;t.onclick=()=>togglePhone(true,"board");$("toasts").appendChild(t);setTimeout(()=>t.remove(),6500)}
+function togglePhone(force,tab){const open=force!=null?force:!phoneOpen;if(open===phoneOpen&&!tab)return;phoneOpen=open;if(tab)G.phoneTab=tab;
+  if(open){releaseMouse();AUD.open();G.unread=0;renderPhone();$("phone").classList.remove("hidden")}else{AUD.close();$("phone").classList.add("hidden")}refreshUI()}
+function renderPhone(){$("phClock").textContent=fmtT(G.T)+" 남음";
+  const cnt={board:G.feed.length,clues:shownCluesFeed().length,marks:G.pax.filter(p=>p.suspect).length};
+  $("ptabs").innerHTML=[["board","게시판"],["wifi","열차 Wi-Fi"],["clues","단서 정리"],["marks","용의자"]].map(([k,n])=>`<button role="tab" aria-selected="${G.phoneTab===k}" data-pt="${k}">${n}${cnt[k]?`<span class="n">${cnt[k]}</span>`:""}</button>`).join("");
+  let h="";const t=G.phoneTab;
+  if(t==="board"){h=G.feed.length?G.feed.slice().reverse().map((p,j)=>`<article class="post ${p.real?"":"fake"} ${j===0?"new":""}" style="animation-delay:${Math.min(j,6)*40}ms"><div class="who"><span class="av">RG</span><span class="nm">${p.real?`<span class="glitch" data-t="${esc(p.author)}">${esc(p.author)}</span>`:esc(p.author)}</span><span class="ts">충돌 ${p.ts} 전</span></div><div class="body">${esc(p.text)}</div>${p.comments&&p.comments.length?`<div class="cm">${p.comments.map(c=>`<span>익명: ${esc(c)}</span>`).join("")}</div>`:""}</article>`).join(""):`<div class="empty">아직 새 글이 없다. 곧 올라올 것이다.</div>`}
+  if(t==="wifi"){h=`<p class="note-s">한빛 107 승객용 Wi-Fi에 연결된 기기 목록 (객차별)</p>`+CARS.map((c,k)=>{if(c.t==="cab")return"";const devs=G.pax.filter(p=>p.car===k&&p.device).map(p=>p.device).sort();return `<div class="wifi-car"><h4>${c.n} · ${devs.length}대</h4><ul>${devs.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></div>`}).join("")}
+  if(t==="clues"){const cl=shownCluesFeed();h=cl.length?cl.map(c=>`<div class="clue-row ${c.vis?"vis":""}"><span class="ic">${c.vis?"◉":"?"}</span><div><b>${esc(c.label)}</b><div class="note-s">${c.vis?"눈으로 확인 가능":"직접 확인 필요 · "+esc(c.how||"")}</div></div></div>`).join("")+`<p class="note-s">${G.D.dim?"견습 계급: 눈으로 확인 가능한 단서와 맞지 않는 승객은 자동으로 흐려진다.":"Q로 용의자를 표시하고 X로 후보에서 지워 나가자."}</p>`:`<div class="empty">아직 받은 단서가 없다.</div>`;
+    if(G.feed.some(p=>!p.real))h+=`<p class="note-s" style="color:var(--orange)">주의: 서명 ◆ 없이 비슷한 이름으로 올라온 글이 있다.</p>`}
+  if(t==="marks"){const l=G.pax.filter(p=>p.suspect);h=l.length?l.map(p=>`<div class="clue-row vis"><span class="ic">!</span><div><b>${esc(p.name)}</b> · ${esc(G.seats[p.seat].label)}<div class="note-s">${esc(COATS.find(c=>c[0]===p.coat)[1])} 외투 · ${esc(HATS.find(x=>x[0]===p.hat)[1])}${p.glasses?" · 안경":""}</div></div></div>`).join(""):`<div class="empty">표시한 용의자가 없다. 승객을 보며 Q를 누르자.</div>`;h+=`<p class="note-s">제외한 승객 ${G.pax.filter(p=>p.excluded).length}명 / 전체 ${G.pax.length}명</p>`}
+  $("pscroll").innerHTML=h}
+$("ptabs").addEventListener("click",e=>{const b=e.target.closest("[data-pt]");if(b){G.phoneTab=b.dataset.pt;AUD.click();renderPhone()}});
+$("phClose").addEventListener("click",()=>togglePhone(false));
+
+/* ====================================================================
+   HUD, MAP, MENU, RESULT
+   ==================================================================== */
+function toast(msg,kind){const t=document.createElement("div");t.className="toast"+(kind==="ok"?" ok":kind?" acc":"");t.textContent=msg;$("toasts").appendChild(t);setTimeout(()=>t.remove(),4200)}
+function flash(a){const f=$("flash");f.style.opacity=a;setTimeout(()=>f.style.opacity=0,120)}
+function setObjective(k,v){const l=$("lower");$("objK").textContent=k;$("objV").textContent=v;l.style.animation="none";void l.offsetWidth;l.style.animation=""}
+function refreshUI(){if(!G.D)return;$("phoneBtn").innerHTML=`휴대폰 <span class="kbd">P</span>${G.unread?` <span style="color:var(--orange)">●${G.unread}</span>`:""}`;
+  $("paxInfo").textContent=`용의자 ${G.pax.filter(p=>p.suspect).length} · 제외 ${G.pax.filter(p=>p.excluded||(G.D.dim&&p.autoDim)).length} / ${G.pax.length}명`}
+function updateHUD(){
+  $("tLeft").textContent=fmtT(G.T);$("timer").classList.toggle("low",G.T<60);$("danger").classList.toggle("on",G.phase==="play"&&G.T<30);
+  $("speed").textContent=Math.round(G.speed);$("dist").textContent=((G.speed+V_MAX)/2*Math.max(0,G.T)/3600).toFixed(1);
+  $("carName").textContent=CARS[carAt(player.z)].n;
+}
+function drawStrip(){const cv=$("strip"),g=cv.getContext("2d"),W2=cv.width,H2=cv.height;g.clearRect(0,0,W2,H2);const pad=10,cw=(W2-pad*2)/CARS.length;
+  CARS.forEach((c,k)=>{const x=pad+k*cw;const cur=carAt(player.z)===k;g.fillStyle=cur?"#3a1216":"#16131a";g.strokeStyle=cur?"#d3262c":"#3a3034";g.lineWidth=2;
+    g.beginPath();if(k===0){g.moveTo(x+28,14);g.lineTo(x+cw-3,14);g.lineTo(x+cw-3,H2-14);g.lineTo(x+4,H2-14);g.quadraticCurveTo(x+2,22,x+28,14)}else g.rect(x+3,14,cw-6,H2-28);g.fill();g.stroke();
+    g.fillStyle=cur?"#f3ece6":"#8a8085";g.font="700 20px 'Noto Sans KR',sans-serif";g.textAlign="center";g.fillText(c.n,x+cw/2,H2/2+7);
+    const sus=G.pax.filter(p=>p.car===k&&p.suspect).length;for(let j=0;j<sus;j++){g.fillStyle="#ff7a1a";g.beginPath();g.arc(x+14+j*12,22,4,0,7);g.fill()}
+    if(k>0&&G.brakes.has(k)){g.fillStyle="#d3262c";g.fillRect(x+cw-16,H2-24,8,8)}});
+  const px=pad+(player.z/CAR_LEN)*cw;g.fillStyle="#ff7a1a";g.beginPath();g.moveTo(px-9,H2-4);g.lineTo(px,H2-14);g.lineTo(px+9,H2-4);g.fill();
+  if(G.arrested){g.fillStyle="#5fbf7a";g.beginPath();g.arc(pad+cw*.3,H2-8,5,0,7);g.fill()}}
+function openModal(kind,html){modalKind=kind;releaseMouse();$("sheet").innerHTML=html;$("modal").classList.remove("hidden");const f=$("sheet").querySelector("button");if(f)f.focus({preventScroll:true})}
+function closeModal(){if(modalKind==="result")return;if(modalKind==="menu")G.pausedMenu=false;modalKind=null;$("modal").classList.add("hidden");AUD.close()}
+$("modal").addEventListener("click",e=>{if(e.target.closest("[data-close]")||(e.target.id==="modal"&&modalKind!=="result"))closeModal()});
+function openMap(){AUD.open();const D=G.D;
+  openModal("map",`<div class="sheet-h"><div><div class="note-s mono">한빛 107 · 8량 편성 · 진행 방향 ←</div><h2>열차 배치도</h2></div><span style="flex:1"></span><button class="xbtn" data-close aria-label="닫기">×</button></div><div class="sheet-b">
+  <canvas id="mapCanvas" width="1600" height="420"></canvas>
+  <div class="legend"><span><i style="background:#8a8085"></i>승객</span><span><i style="background:#ff7a1a"></i>용의자</span><span><i style="background:#2a2428"></i>제외</span><span><i style="background:#d3262c"></i>체포</span><span><i style="background:#56d6ff"></i>나</span></div>
+  <p class="sect" style="margin:4px 0 0">칸 이동 · ${D.travel?D.travel+"초":"즉시"}</p>
+  <div class="ranks" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px">${CARS.map((c,k)=>`<button class="act" data-go="${k}" ${carAt(player.z)===k?"disabled":""}><span>${c.n}</span><span class="t">${carAt(player.z)===k?"현재":"이동"}</span></button>`).join("")}</div></div>`);
+  drawMap();$("mapCanvas").addEventListener("click",e=>{const r=e.target.getBoundingClientRect();const k=Math.floor(((e.clientX-r.left)/r.width*1600-20)/((1600-40)/CARS.length));if(k>=0&&k<CARS.length)travel(k)});
+  $("sheet").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>travel(+b.dataset.go))}
+function drawMap(){const cv=$("mapCanvas");if(!cv)return;const g=cv.getContext("2d"),W2=1600,H2=420,pad=20,cw=(W2-pad*2)/CARS.length,sc=cw/CAR_LEN;g.fillStyle="#060607";g.fillRect(0,0,W2,H2);
+  const y0=H2/2,ys=(x)=>y0+x*70;
+  CARS.forEach((c,k)=>{const x=pad+k*cw;g.fillStyle="#141116";g.strokeStyle=carAt(player.z)===k?"#d3262c":"#3a3034";g.lineWidth=3;g.fillRect(x+3,ys(-1.6),cw-6,70*3.2);g.strokeRect(x+3,ys(-1.6),cw-6,70*3.2);
+    g.fillStyle="#f3ece6";g.font="700 22px 'Noto Sans KR',sans-serif";g.textAlign="center";g.fillText(c.n,x+cw/2,ys(-1.6)-12);
+    if(k>0){g.fillStyle=G.brakes.has(k)?"#3a3034":"#d3262c";g.fillRect(x+6,ys(.7),8,14)}});
+  G.seats.forEach(s=>{if(s.cafe)return;g.fillStyle="#1d191c";g.fillRect(pad+(s.z/CAR_LEN)*cw-5,ys(s.x)-6,10,12)});
+  G.pax.forEach(p=>{const s=G.seats[p.seat];const x=pad+(s.z/CAR_LEN)*cw,y=ys(s.x);g.fillStyle=G.arrested&&p.i===G.culprit?"#d3262c":p.suspect?"#ff7a1a":(p.excluded||(G.D.dim&&p.autoDim))?"#2a2428":"#8a8085";g.beginPath();g.arc(x,y,p.suspect?7:5,0,7);g.fill()});
+  const px=pad+(player.z/CAR_LEN)*cw,py=ys(player.x);g.save();g.translate(px,py);g.rotate(-player.yaw-Math.PI/2);g.fillStyle="#56d6ff";g.beginPath();g.moveTo(12,0);g.lineTo(-8,8);g.lineTo(-4,0);g.lineTo(-8,-8);g.fill();g.restore()}
+function travel(k){if(carAt(player.z)===k)return;spend(G.D.travel,G.D.travel?CARS[k].n+"(으)로 이동":null);player.x=0;player.z=k*CAR_LEN+(k===0?3:1.2);player.yaw=k===0?0:Math.PI;player.pitch=0;for(let i=0;i<4;i++)setTimeout(()=>AUD.step(true),i*200);modalKind=null;$("modal").classList.add("hidden")}
+function openMenu(){AUD.open();G.pausedMenu=true;
+  openModal("menu",`<div class="sheet-h"><div><div class="note-s mono">일시정지 · 충돌까지 ${fmtT(G.T)}</div><h2>메뉴</h2></div><span style="flex:1"></span><button class="xbtn" data-close aria-label="닫기">×</button></div><div class="sheet-b">
+  <button class="btn btn-cta" data-close>계속하기</button>
+  <div class="switch"><span>소리</span><button class="btn btn-ghost" id="sMute">${AUD.muted?"소리 켜기":"음소거"}</button></div>
+  ${[["master","전체 음량"],["music","음악"],["sfx","효과음"],["amb","열차 소음"]].map(([k,n])=>`<div class="switch"><label for="v_${k}">${n}</label><input type="range" id="v_${k}" data-vol="${k}" min="0" max="1" step="0.05" value="${AUD.vol[k]}" style="accent-color:var(--orange);width:min(220px,45%)"></div>`).join("")}
+  <div class="switch"><label for="sSens">마우스 감도</label><input type="range" id="sSens" min=".4" max="2" step=".1" value="${sens}" style="accent-color:var(--orange);width:min(220px,45%)"></div>
+  <div class="switch"><span>성능 정보 (FPS · 폴리곤 · 드로우 콜)</span><button class="btn btn-ghost" id="sPerf">${perfOn?"숨기기":"보이기"}</button></div>
+  <div class="switch"><span>처음부터 다시</span><button class="btn btn-ghost" id="sRestart">재시작</button></div></div>`);
+  $("sMute").onclick=()=>{AUD.muted=!AUD.muted;$("sMute").textContent=AUD.muted?"소리 켜기":"음소거"};
+  $("sheet").querySelectorAll("[data-vol]").forEach(r=>{r.oninput=()=>{AUD.vol[r.dataset.vol]=parseFloat(r.value);AUD.applyVol()};r.onchange=()=>AUD.persist()});
+  $("sSens").oninput=e=>sens=parseFloat(e.target.value);$("sPerf").onclick=()=>{perfOn=!perfOn;$("perf").classList.toggle("hidden",!perfOn);$("sPerf").textContent=perfOn?"숨기기":"보이기"};
+  $("sRestart").onclick=()=>restart(G.diff)}
+function restart(diff){try{localStorage.setItem("train107-again",diff||"")}catch(e){}location.reload()}
+function countUp(el,to,fmt,dur=1200){const t0=performance.now();const f=()=>{const p=Math.min(1,(performance.now()-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=fmt(to*e);if(p<1)requestAnimationFrame(f)};f()}
+function showResult(won){
+  const c=G.pax[G.culprit],s=G.seats[c.seat];const left=Math.max(0,G.T);
+  let score=0;if(won){score=Math.round(Math.min(100,40+left/G.T0*90-G.wrong*10+(G.brakes.size?0:5)))}
+  const grade=!won?"충돌":score>=90?"완벽한 제압":score>=70?"열차 정지":score>=50?"아슬아슬한 정지":"간신히 정지";
+  let best=null;if(won){try{const b=JSON.parse(localStorage.getItem("train107-best")||"{}");if(!b[G.diff]||left>b[G.diff]){b[G.diff]=left;localStorage.setItem("train107-best",JSON.stringify(b))}best=b[G.diff]}catch(e){}}
+  openModal("result",`<div class="sheet-h"><div><div class="note-s mono">사건 02 · 폭주 열차 · ${G.D.name}</div><h2>${grade}</h2></div></div><div class="sheet-b prose">
+  ${won?`<div class="score" id="rScore">0</div>`:`<p style="font-size:18px">열차는 시속 ${Math.round(G.crashSpeed||G.speed)}km로 해솔역 차막이 벽에 부딪혔다.</p>`}
+  <div class="stats"><div class="stat"><div class="k">남은 시간</div><div class="v" id="rLeft">00:00</div></div><div class="stat"><div class="k">오인 체포</div><div class="v">${G.wrong}</div></div><div class="stat"><div class="k">비상 브레이크</div><div class="v">${G.brakes.size}</div></div><div class="stat"><div class="k">관찰한 승객</div><div class="v" id="rObs">0</div></div></div>
+  <h3>레일고스트의 정체</h3><p><b>${esc(c.name)}</b> (${c.age}세) · ${esc(s.label)} · ${esc(COATS.find(x=>x[0]===c.coat)[1])} 외투 · ${esc(c.station)}역 승차 · 기기 <span class="mono">${esc(c.device)}</span></p>
+  <p>그가 흘린 단서: ${G.clues.map(x=>esc(x.label)).join(" · ")}</p>
+  ${best!=null?`<p class="note-s">${G.D.name} 최고 기록: ${fmtT(best)} 남기고 정지</p>`:""}
+  <div class="row" style="justify-content:flex-end"><button class="btn btn-ghost" id="toTitle">처음으로</button><button class="btn btn-cta" id="again">같은 계급으로 다시</button></div></div>`);
+  if(won)countUp($("rScore"),score,v=>Math.round(v));countUp($("rLeft"),left,v=>fmtT(v));countUp($("rObs"),G.observed.size,v=>Math.round(v));
+  $("toTitle").onclick=()=>restart("");$("again").onclick=()=>restart(G.diff);
+}
+
+/* ====================================================================
+   CINEMATICS (shot list using camera language from the motion guide)
+   ==================================================================== */
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,easeOut=t=>1-Math.pow(1-t,3);
+let shots=[],shotIdx=0,shotT=0;
+function kinetic(sub,text){const el=$("cineText");el.innerHTML=(sub?`<div class="cine-sub">${esc(sub)}</div>`:"")+`<div class="kin">${[...text].map((ch,i)=>`<span style="animation-delay:${i*45}ms">${ch===" "?"&nbsp;":esc(ch)}</span>`).join("")}</div>`}
+function runShots(list,done){shots=list;shotIdx=0;shotT=0;shots.done=done;$("cine").classList.remove("hidden","off");shots[0].setup&&shots[0].setup()}
+function updateShots(dt){if(!shots.length)return;const s=shots[shotIdx];shotT+=dt;const p=Math.min(1,shotT/s.dur);s.update(p,dt);
+  if(p>=1){shotIdx++;shotT=0;if(shotIdx>=shots.length){const d=shots.done;shots=[];d&&d()}else shots[shotIdx].setup&&shots[shotIdx].setup()}}
+function lookAt(x,y,z,tx,ty,tz,roll=0){cam.position.set(x,y,z);cam.up.set(Math.sin(roll),Math.cos(roll),0);cam.lookAt(tx,ty,tz)}
+function introShots(){return[
+  {dur:4.6,setup(){shell.visible=true;kinetic("23:41 · 경부 고속선 하행","한빛 107")},update(p){const a=-.9+p*.7;lookAt(Math.cos(a)*42,26-10*ease(p),70+Math.sin(a)*60,0,0,60)}},// drone / extreme long shot
+  {dur:3.4,setup(){$("cineText").innerHTML="";this.z=-150},update(p,dt){this.z+=G.speed/3.6*dt;lookAt(3.6,-.7,this.z,0,1,this.z-30)}},// worm's-eye trackside: the train passes
+  {dur:3.6,setup(){shell.visible=false;kinetic("기관실 · 원격 조작 감지","SYSTEM LOCKED");AUD.glitch()},update(p){lookAt(.3,1.6,2.6-p*.5,0,1.3,-20,.12*Math.sin(p*3))}},// dutch angle in the cab
+  {dur:3.2,setup(){$("cineText").innerHTML="";addFeed(G.posts[0],false);G.postPtr=1;kinetic("레일고스트","이 열차는 멈추지 않는다")},update(p){lookAt(0,1.62,player.z+.0001,0,1.62-p*.04,player.z-10)}},
+  {dur:2.4,setup(){kinetic("사건 02","폭주 열차")},update(p){lookAt(0,1.62,player.z,0,1.62,player.z-10)}}
+]}
+function skipCine(){if(G.phase!=="intro")return;if(!G.feed.length){addFeed(G.posts[0],true);G.postPtr=1}shots=[];startPlay()}
+function startPlay(){G.phase="play";shell.visible=false;$("cine").classList.add("off");setTimeout(()=>$("cine").classList.add("hidden"),800);$("skip").classList.add("hidden");$("cineText").innerHTML="";
+  $("hud").classList.remove("hidden");setObjective("OBJECTIVE","레일고스트를 찾아 체포하라 · 게시판 단서는 휴대폰(P)");AUD.startMusic();refreshUI()}
+function startEnding(){G.phase="won";closePanel();togglePhone(false);releaseMouse();$("hud").classList.add("hidden");AUD.screech();AUD.mood.ending=1;
+  G.endT=0;G.endD=330;G.endV0=2*(G.endD-7)/8;station.visible=true;stationLight.intensity=0;drawConsole();
+  runShots([
+    {dur:2.2,setup(){kinetic("제어권 회수","비상 제동")},update(p){lookAt(0,1.6,3.2,0,1.2,-20,Math.sin(p*40)*.01)}},
+    {dur:4.2,setup(){shell.visible=true;$("cineText").innerHTML=""},update(p){const wz=station.position.z;lookAt(9.5-2.5*p,3.4-.6*p,wz+48-26*easeOut(p),0,.8,wz+14)}},// tracking shot along the platform
+    {dur:3.4,setup(){},update(p){const wz=station.position.z;lookAt(2.4,-.2,wz-1.5,0,.6,wz+12)}},// low angle at the buffer
+    {dur:2.4,setup(){kinetic("23:"+String(41+Math.floor(G.el/60)).padStart(2,"0")+" · 해솔역","정지.");AUD.success()},update(p){const wz=station.position.z;lookAt(2.4,-.2+p*.3,wz-1.5,0,.6,wz+12)}}
+  ],()=>{showResult(true)});
+  $("cine").classList.remove("hidden","off")}
+function startCrash(){G.crashSpeed=Math.max(G.speed,V_MAX-20);G.phase="crash";closePanel();togglePhone(false);releaseMouse();$("hud").classList.add("hidden");G.endD=260;station.visible=true;shell.visible=true;AUD.alarm();
+  runShots([{dur:2.6,setup(){kinetic("충돌까지","0:00")},update(p){const wz=station.position.z;lookAt(-9,2,wz+70-50*p,0,1,wz+10)}}],()=>{});$("cine").classList.remove("hidden","off")}
+function updateEnding(dt){
+  if(G.phase==="won"){G.endT+=dt;const a=G.endV0/8;const v=Math.max(0,G.endV0-a*G.endT);G.speed=v*3.6;const tt=Math.min(G.endT,8);const d=Math.max(7,G.endD-(G.endV0*tt-.5*a*tt*tt));station.position.z=-5.9-d;stationLight.position.set(0,6,station.position.z+20);stationLight.intensity=Math.min(2,stationLight.intensity+dt*.6);return v}
+  if(G.phase==="crash"){const v=Math.max(G.speed/3.6,60);G.endD-=v*dt;station.position.z=-5.9-Math.max(0,G.endD);stationLight.position.set(0,6,station.position.z+20);stationLight.intensity=1.5;
+    if(G.endD<=0&&!G.crashed){G.crashed=true;AUD.crash();flash(1);$("flash").style.transition="opacity 2.5s";setTimeout(()=>{$("flash").style.opacity=0},300);shots=[];setTimeout(()=>showResult(false),1600)}return G.crashed?0:v}
+  return 0}
+
+/* ====================================================================
+   LOOP
+   ==================================================================== */
+let lastT=0,hudAcc=0,dispAcc=0,hovAcc=0,frames=0,fpsT=0,prNow=1;
+function loop(t){requestAnimationFrame(loop);t/=1000;const dt=Math.min(.05,t-(lastT||t));lastT=t;
+  let v;
+  if(G.phase==="play"||G.phase==="intro"){
+    if(G.phase==="play"&&!paused()){G.el+=dt;G.T-=dt;
+      while(G.postPtr<G.posts.length&&G.posts[G.postPtr].t<=G.el){addFeed(G.posts[G.postPtr]);G.postPtr++}
+      if(G.T<60){G.alarmAcc+=dt;if(G.alarmAcc>1.2){G.alarmAcc=0;AUD.alarm()}}
+      if(G.T<=0){G.T=0;startCrash()}}
+    const frac=1-Math.max(0,G.T)/G.T0;G.speedDip=Math.max(0,(G.speedDip||0)-dt*.25);G.speed=V_MIN+(V_MAX-V_MIN)*Math.min(1,frac)-60*G.speedDip;v=G.speed/3.6;
+    AUD.mood.tension=Math.min(1,frac*1.2+(G.T<90?.3:0));
+  } else v=updateEnding(dt);
+  scroll(v*dt,dt);
+  if(G.phase==="play"){move(dt);
+    const sf=G.speed/V_MAX,shake=RM?0:.006+.01*sf+(G.T<30?.012:0);const bob=RM?0:Math.sin(player.bob)*.028;
+    G.dollyZoom=Math.max(0,(G.dollyZoom||0)-dt*.8);cam.fov=72-14*Math.sin(Math.PI*(G.dollyZoom||0));cam.updateProjectionMatrix();
+    cam.up.set(0,1,0);cam.position.set(player.x+Math.sin(t*1.7)*.01*sf+(Math.random()-.5)*shake*.4,1.62+bob+(Math.random()-.5)*shake*.3,player.z);
+    cam.rotation.set(player.pitch,player.yaw,Math.sin(t*.9)*.006*sf,"YXZ");
+    if((hovAcc+=dt)>.06){hovAcc=0;updateHover()}
+  } else updateShots(dt);
+  updateLights(dt);
+  AUD.update(dt,G.speed,G.tunnel,G.phase==="play");
+  if((hudAcc+=dt)>.1){hudAcc=0;if(G.phase==="play"){updateHUD();drawStrip();if(phoneOpen)$("phClock").textContent=fmtT(G.T)+" 남음"}}
+  if((dispAcc+=dt)>1){dispAcc=0;drawDisplays();if(carAt(player.z)===0||G.phase!=="play")drawConsole()}
+  renderer.render(scene,cam);
+  frames++;fpsT+=dt;if(fpsT>=1){const fps=frames/fpsT;frames=0;fpsT=0;const max=Math.min(devicePixelRatio,Q.pr);if(fps<45&&prNow>.6){prNow=Math.max(.6,prNow-.15);renderer.setPixelRatio(prNow)}else if(fps>58&&prNow<max){prNow=Math.min(max,prNow+.1);renderer.setPixelRatio(prNow)}
+    if(perfOn){const i=renderer.info.render;$("perf").innerHTML=`FPS ${fps.toFixed(0)} · 해상도 ×${prNow.toFixed(2)}<br>삼각형 ${i.triangles.toLocaleString()} · 드로우 콜 ${i.calls}<br>승객 ${G.pax.length}명 · 품질 ${QK}`}}
+}
+addEventListener("resize",()=>{if(!renderer)return;cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+/* ====================================================================
+   BOOT
+   ==================================================================== */
+let chosen="normal";
+const sel=(q,a,v)=>document.querySelectorAll(q).forEach(b=>b.setAttribute("aria-checked",String(b.dataset[a]===v)));
+document.querySelectorAll(".rank").forEach(b=>b.addEventListener("click",()=>{chosen=b.dataset.diff;sel(".rank","diff",chosen)}));
+document.querySelectorAll("#qualSeg button").forEach(b=>b.addEventListener("click",()=>{QK=b.dataset.q;sel("#qualSeg button","q",QK)}));
+if(isTouch){QK="low";sel("#qualSeg button","q","low")}
+try{const b=JSON.parse(localStorage.getItem("train107-best")||"{}");const s=Object.entries(b).map(([k,v])=>`${DIFFS[k].name} ${fmtT(v)}`).join(" · ");if(s)$("best").textContent="최고 기록 (남은 시간) · "+s}catch(e){}
+document.addEventListener("pointerdown",()=>AUD.init(),{capture:true});
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(b&&!b.disabled&&!b.closest("#pBody")&&!b.closest("#ptabs"))AUD.click()},true);
+async function boot(){
+  if(typeof THREE==="undefined"||!THREE.BufferGeometryUtils){$("startBtn").textContent="3D 엔진을 불러오지 못했습니다";return}
+  AUD.init();Q=QS[QK];G.diff=chosen;G.D=DIFFS[chosen];G.T0=G.T=G.D.time;G.postPtr=0;
+  genPassengers();genClues();buildPosts();
+  $("start").classList.add("hidden");$("loading").classList.remove("hidden");
+  try{await buildWorld()}catch(err){console.error(err);$("loadStep").textContent="이 기기에서 WebGL을 시작하지 못했습니다. 다른 브라우저에서 열거나 품질을 ‘낮음’으로 바꿔 보세요.";return}
+  prNow=Math.min(devicePixelRatio,Q.pr);player.z=5*CAR_LEN+9.5;player.yaw=0;
+  $("loading").classList.add("hidden");bindControls();
+  G.phase="intro";$("skip").classList.remove("hidden");AUD.startAmb();
+  runShots(introShots(),startPlay);requestAnimationFrame(loop);
+}
+$("startBtn").addEventListener("click",boot);$("skip").addEventListener("click",skipCine);
+$("phoneBtn").onclick=()=>togglePhone();$("tbPhone").onclick=()=>togglePhone();$("mapBtn").onclick=openMap;$("tbMap").onclick=openMap;$("strip").onclick=openMap;
+$("menuBtn").onclick=openMenu;$("tbMenu").onclick=openMenu;$("tbSus").onclick=()=>{if(hovered&&hovered.startsWith("p:"))toggleSuspect(+hovered.slice(2));else toast("승객을 바라본 상태에서 누르면 용의자로 표시된다",true)};
+try{const ag=localStorage.getItem("train107-again");if(ag!==null){localStorage.removeItem("train107-again");if(ag&&DIFFS[ag]){chosen=ag;sel(".rank","diff",ag)}}}catch(e){}
+
+</script>
+</body>
+</html>
